@@ -454,7 +454,7 @@ button:disabled{
     .landingBlurbGrid{ grid-template-columns: 1fr; }
 }
 
-/* ===== NEW: Model header on calculator page ===== */
+/* ===== Model header on calculator page ===== */
 #modelHeaderWrap{
     margin: 8px 0 18px 0;
     text-align: center;
@@ -472,6 +472,69 @@ button:disabled{
     width: 100%;
     background: #e5e7eb;
     margin: 0;
+}
+
+/* ===== Tooltip styles for stat labels ===== */
+.statTip{
+    position: relative;
+    user-select: none;
+}
+
+.tipIcon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    color: #111827;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    vertical-align: middle;
+    outline: none;
+}
+
+.tipBox{
+    position: absolute;
+    left: 0;
+    top: 100%;
+    transform: translateY(8px);
+    z-index: 50;
+    min-width: 260px;
+    max-width: 330px;
+    background: #111827;
+    color: #ffffff;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.35;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.20);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: normal;
+}
+
+.tipBox strong{
+    font-weight: 800;
+}
+
+/* Show tooltip ONLY when hovering/focusing the ? icon */
+.tipIcon:hover + .tipBox,
+.tipIcon:focus + .tipBox{
+    opacity: 1;
+    visibility: visible;
+}
+
+/* If a tooltip would run off the page on small screens, nudge it left */
+@media (max-width: 640px){
+    .tipBox{
+        left: -20px;
+        max-width: 280px;
+    }
 }
 
 </style>
@@ -559,7 +622,7 @@ button:disabled{
             <button id="positionGoBtn" type="button" class="goBtnSmall">Go</button>
         </div>
 
-        <!-- NEW: Model header + page break line -->
+        <!-- Model header + page break line -->
         <div id="modelHeaderWrap" class="hidden">
             <div id="modelHeaderText"></div>
             <hr id="modelHeaderLine">
@@ -569,19 +632,43 @@ button:disabled{
             <h2>Attacking Performance</h2>
 
             <div class="fieldRow">
-                <label for="kills">Kills/Set:</label>
+                <label for="kills" class="statTip">
+                    Kills/Set
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Average number of kills per set.<br><br>
+                        <strong>How to calculate:</strong> Total kills / total sets played.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0 - 15
+                    </span>
+                </label>
                 <input type="number" id="kills" min="0" step="0.01" placeholder="1.11">
                 <div class="errorMessage" id="err_kills"></div>
             </div>
 
             <div class="fieldRow">
-                <label for="hitPct">Hitting %:</label>
+                <label for="hitPct" class="statTip">
+                    Hitting %
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Efficiency of your swings.<br><br>
+                        <strong>How to calculate:</strong> (Kills − Errors) / Total Attempts.<br><br>
+                        <strong>Acceptable Value Range:</strong> -1.000 - 1.000
+                    </span>
+                </label>
                 <input type="number" id="hitPct" min="-1" max="1" step="0.001" placeholder="0.333">
                 <div class="errorMessage" id="err_hitPct"></div>
             </div>
 
             <div class="fieldRow">
-                <label for="killPct">Kill %:</label>
+                <label for="killPct" class="statTip">
+                    Kill %
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Percent of swings that become kills.<br><br>
+                        <strong>How to calculate:</strong> Kills / Total Attempts.<br><br>
+                        <strong>Acceptable Value Range:</strong> -1.000 - 1.000
+                    </span>
+                </label>
                 <input type="number" id="killPct" min="-1" max="1" step="0.001" placeholder="0.444">
                 <div class="errorMessage" id="err_killPct"></div>
             </div>
@@ -597,7 +684,15 @@ button:disabled{
             <h2>Blocking Performance</h2>
 
             <div class="fieldRow">
-                <label for="blocks">Blocks/Set:</label>
+                <label for="blocks" class="statTip">
+                    Blocks/Set
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Average total blocks per set.<br><br>
+                        <strong>How to calculate:</strong> Total blocks (solo + assist) / total sets played.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 10.00
+                    </span>
+                </label>
                 <input type="number" id="blocks" min="0" step="0.01" placeholder="0.33">
                 <div class="errorMessage" id="err_blocks"></div>
             </div>
@@ -613,13 +708,29 @@ button:disabled{
             <h2>Blocking Performance</h2>
 
             <div class="fieldRow">
-                <label for="soloBlocks">Solo Blocks/Set:</label>
+                <label for="soloBlocks" class="statTip">
+                    Solo Blocks/Set
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Average solo blocks per set.<br><br>
+                        <strong>How to calculate:</strong> Total solo blocks / total sets played.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 10.00
+                    </span>
+                </label>
                 <input type="number" id="soloBlocks" min="0" step="0.01" placeholder="0.11">
                 <div class="errorMessage" id="err_soloBlocks"></div>
             </div>
 
             <div class="fieldRow">
-                <label for="assistBlocks">Assist Blocks/Set:</label>
+                <label for="assistBlocks" class="statTip">
+                    Assist Blocks/Set
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Average assist blocks per set.<br><br>
+                        <strong>How to calculate:</strong> Total block assists / total sets played.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 10.00
+                    </span>
+                </label>
                 <input type="number" id="assistBlocks" min="0" step="0.01" placeholder="0.33">
                 <div class="errorMessage" id="err_assistBlocks"></div>
             </div>
@@ -635,13 +746,29 @@ button:disabled{
             <h2>Serving Performance</h2>
 
             <div class="fieldRow">
-                <label for="aces">Aces/Attempt:</label>
+                <label for="aces" class="statTip">
+                    Aces/Attempt
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> The ratio of aces to total serve attempts.<br><br>
+                        <strong>How to calculate:</strong> Total aces / total serve attempts.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 1.00
+                    </span>
+                </label>
                 <input type="number" id="aces" min="0" max="1" step="0.01" placeholder="0.11">
                 <div class="errorMessage" id="err_aces"></div>
             </div>
 
             <div class="fieldRow">
-                <label for="serveErrors">Errors/Attempt:</label>
+                <label for="serveErrors" class="statTip">
+                    Errors/Attempt
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> The ratio of service errors to total serve attempts.<br><br>
+                        <strong>How to calculate:</strong> Total service errors / total service attempts.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 1.00
+                    </span>
+                </label>
                 <input type="number" id="serveErrors" min="0" max="1" step="0.01" placeholder="0.22">
                 <div class="errorMessage" id="err_serveErrors"></div>
             </div>
@@ -657,7 +784,15 @@ button:disabled{
             <h2>Defense Performance</h2>
 
             <div class="fieldRow">
-                <label for="digs">Digs/Set:</label>
+                <label for="digs" class="statTip">
+                    Digs/Set
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Average digs per set.<br><br>
+                        <strong>How to calculate:</strong> Total digs / total sets played.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 10.00
+                    </span>
+                </label>
                 <input type="number" id="digs" min="0" step="0.01" placeholder="1.11">
                 <div class="errorMessage" id="err_digs"></div>
             </div>
@@ -673,7 +808,20 @@ button:disabled{
             <h2>Serve Receive Performance</h2>
 
             <div class="fieldRow">
-                <label for="reception">Reception Rating:</label>
+                <label for="reception" class="statTip">
+                    Reception Rating
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong><br>
+                        4 - Perfect Pass, all offensive options available.<br>
+                        3 - Good: Slightly off-target but still in system.<br>
+                        2 - Out-of-System: only high-ball options.<br>
+                        1 - Bad/Overpass: Shanked or overpassed ball that’s barely playable.<br>
+                        0 - Error: Ace or unplayable pass.<br><br>
+                        <strong>How to calculate:</strong> Using the 0-4 pass rating scale. Sum of all pass ratings / total receptions.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 4.00
+                    </span>
+                </label>
                 <input type="number" id="reception" min="0" max="4" step="0.01" placeholder="3.33">
                 <div class="errorMessage" id="err_reception"></div>
             </div>
@@ -689,7 +837,15 @@ button:disabled{
             <h2>Setting Performance</h2>
 
             <div class="fieldRow">
-                <label for="assists">Assists/Set:</label>
+                <label for="assists" class="statTip">
+                    Assists/Set
+                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipBox">
+                        <strong>What it is:</strong> Average assists per set.<br><br>
+                        <strong>How to calculate:</strong> Total assists / total sets played.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 20.00
+                    </span>
+                </label>
                 <input type="number" id="assists" min="0" step="0.01" placeholder="9.99">
                 <div class="errorMessage" id="err_assists"></div>
             </div>
@@ -739,7 +895,7 @@ const position = document.getElementById("position");
 const landingGoBtn = document.getElementById("landingGoBtn");
 const positionGoBtn = document.getElementById("positionGoBtn");
 
-// NEW: model header elements
+// model header elements
 const modelHeaderWrap = document.getElementById("modelHeaderWrap");
 const modelHeaderText = document.getElementById("modelHeaderText");
 
@@ -752,11 +908,11 @@ const accessError = document.getElementById("accessError");
 const accessGranted = document.getElementById("accessGranted");
 
 // Access code config
-const ACCESS_CODE = "Password"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
+const ACCESS_CODE = "BetaTesting1"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
 const ACCESS_FLAG_KEY = "vpr_access_granted";
 const ACCESS_TOAST_SHOWN_KEY = "vpr_access_toast_shown";
 
-/* NEW: model label names for header */
+/* model label names for header */
 const modelNameByValue = {
     middle1: "Middle Blocker 1 Model",
     middle2: "Middle Blocker 2 Model",
