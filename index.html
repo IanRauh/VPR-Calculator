@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VPR Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 18px 0 40px 0;
+    background: #f5f6f8;
+    color: #111827;
+}
+
+.pageContainer {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 0;
+}
+
+/* ===== Landing + Header ===== */
+.header h1{
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    text-align: center;
+    margin-bottom: 1px;
+    margin-top: 10px;
+}
+
+.main-title {
+    font-size: 100px;
+    margin: 0;
+}
+
+.landingSubTitle {
+    font-family: "Inter", Arial, sans-serif;
+    max-width: 1050px;
+    margin: 14px auto;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    letter-spacing: 0.1px;
+    line-height: 1.55;
+    padding: 0 18px;
+    padding-bottom: 40px;
+}
+
+.landingSubTitle + .landingSubTitle {
+    margin-top: 28px;
+}
+
+.full-width-line {
+    border: none;
+    height: 2px;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    background: #e5e7eb;
+}
+
+/* ===== Cards ===== */
+.category {
+    background: #ffffff;
+    padding: 16px 20px 16px 20px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    position: relative;
+}
+
+.category h2 {
+    text-align: left;
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+label { display: inline-block; width: 190px; margin-bottom: 0; }
+input[type="number"] { width: 65px; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input.invalid { border: 2px solid red; }
+input.valid { border: 1px solid #ccc; }
+
+select { 
+    width: 176px;
+    margin-bottom: 20px;
+}
+
+input[type="number"], select {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 6px 8px;
+    background: #ffffff;
+    color: #111827;
+    outline: none;
+}
+
+input[type="number"]:focus, select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+}
+
+.scoreDisplay {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    color: #0f766e;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.weightRow { margin-top: 10px; font-size: 13px; }
+.weightRow span { font-weight: bold; margin-left: 10px; }
+
+.errorMessage { color: red; font-size: 13px; margin-top: 0; }
+
+button {
+    display: block;
+    width: 220px;
+    margin: 24px auto;
+    padding: 12px 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+button:hover {
+    background: #1d4ed8;
+    cursor: pointer;
+}
+
+/* clear button styling */
+#clearBtn{
+    width: 120px;
+    padding: 9px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    background: #6b7280;
+    margin-top: 12px;
+}
+
+#clearBtn:hover{
+    background: #4b5563;
+}
+
+#vprResult { 
+    text-align: center; 
+    font-size: 52px; 
+    font-weight: bold; 
+    color: #2b7a2b; 
+}
+
+.hidden { display: none; }
+
+/* Bell curve styles */
+#bellWrapper {
+    margin-top: 18px;
+    margin-bottom: 10px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+#bellTopLabels, #bellBottomLabels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 5px;
+}
+
+#bellTopLabels span {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+    text-decoration: underline;
+    color: #000000;
+}
+
+#bellBottomLabels {
+    justify-content: space-between;
+    margin-top: -18px;
+    padding-top: 0px;
+}
+
+#bellBottomLabels span {
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
+
+#bellBottomLabels span:nth-child(1) { text-align: left; }
+#bellBottomLabels span:nth-child(2) { text-align: center; }
+#bellBottomLabels span:nth-child(3) { text-align: right; }
+
+#bellTopLabels span:nth-child(1) { text-align: left; }
+#bellTopLabels span:nth-child(2) { text-align: center; }
+#bellTopLabels span:nth-child(3) { text-align: right; }
+
+#bellWrapper svg {
+    display: block;
+    margin-bottom: 0px;
+}
+
+/* Position selector row */
+.input-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input-row label {
+    width: 150px;
+    text-align: right;
+    margin: 0;
+    line-height: 30px;
+}
+
+.input-row select {
+    position: relative;
+    top: 0px;
+    height: 30px;
+    font-size: 16px;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+/* Small Go buttons next to dropdowns */
+.goBtnSmall{
+    width: 70px;
+    margin: 0;
+    padding: 6px 10px;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+.bellLabel { text-align: center; }
+.percentileText { font-size: 6px; margin-bottom: 11px; }
+.descText { font-size: 13px; }
+
+/* Clean row layout for inputs and errors */
+.fieldRow {
+    display: grid;
+    grid-template-columns: 190px 75px max-content;
+    column-gap: 14px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.fieldRow label {
+    width: auto;
+    margin: 0;
+}
+
+.fieldRow input[type="number"] {
+    width: 65px;
+}
+
+.fieldRow .errorMessage {
+    grid-column: 3 / 4;
+    margin: 0;
+    white-space: nowrap;
+    line-height: 1.2;
+    padding-left: 4px;
+}
+
+/* Landing dropdown block */
+.landingSelectWrap {
+    background: #ffffff;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    margin: 60px auto 0px auto;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.landingSelectWrap .input-row {
+    align-items: center;
+}
+
+.landingSelectWrap .input-row label {
+    width: auto;
+    text-align: left;
+    line-height: normal;
+}
+
+.landingSelectWrap .input-row select {
+    height: 30px;
+    padding: 2px 8px;
+    margin-bottom: 0;
+    line-height: normal;
+}
+
+/* Landing credit blurb */
+.landingCredit {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    font-size: 11px;
+    color: #6b7280;
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 600;
+    user-select: none;
+}
+
+/* ===== Access Code block (landing) ===== */
+.accessWrap {
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    margin: 0 auto 10px auto;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.accessRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.accessRow label {
+    width: auto;
+    text-align: left;
+    margin: 0;
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+#accessCode {
+    width: 176px;
+    height: 30px;
+    font-size: 16px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+}
+
+#accessCode:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+}
+
+#accessBtn {
+    width: 70px;
+    margin: 0;
+    padding: 6px 10px;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+/* Access granted "toast" inside the same block area */
+#accessGranted {
+    color: #2b7a2b;
+    font-size: 14px;
+    font-weight: 800;
+    font-family: "Inter", Arial, sans-serif;
+    text-align: center;
+    padding: 6px 0;
+}
+
+/* Disabled landing select look */
+select:disabled,
+button:disabled{
+    background: #e5e7eb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.landingBlurbGrid{
+    max-width: 1000px;
+    margin: 20px auto 70px auto;
+    padding: 0 18px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px;
+}
+
+.landingBlurbCard{
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    padding: 14px 16px;
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.55;
+    text-align: left;
+}
+
+/* First landing blurb spans full width (both columns) */
+.landingBlurbGrid .landingBlurbCard:first-child{
+    grid-column: 1 / -1;
+}
+
+.landingBlurbCard{
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.landingBlurbHeader{
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    line-height: 1.25;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+}
+
+.landingBlurbBody{
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.55;
+}
+
+@media (max-width: 640px){
+    .landingBlurbGrid{ grid-template-columns: 1fr; }
+}
+
+/* ===== NEW: Model header on calculator page ===== */
+#modelHeaderWrap{
+    margin: 8px 0 18px 0;
+    text-align: center;
+}
+#modelHeaderText{
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin: 8px 0 10px 0;
+    color: #111827;
+}
+#modelHeaderLine{
+    border: none;
+    height: 2px;
+    width: 100%;
+    background: #e5e7eb;
+    margin: 0;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===================== LANDING PAGE ===================== -->
+<div id="landingPage">
+    <div class="header">
+        <h1 class="main-title">VPR Calculator</h1>
+        <hr class="full-width-line">
+
+        <!-- Access Code area -->
+        <div class="accessWrap" id="accessWrap">
+            <div class="accessRow" id="accessRow">
+                <label for="accessCode">Enter Access Code:</label>
+                <input id="accessCode" type="password" autocomplete="off" />
+                <button id="accessBtn" type="button" class="goBtnSmall">Go</button>
+            </div>
+            <div class="errorMessage" id="accessError"></div>
+            <div id="accessGranted" class="hidden">Access Granted</div>
+        </div>
+
+        <!-- Landing position selector requires Go -->
+        <div class="landingSelectWrap">
+            <div class="input-row">
+                <label for="landingPosition">Select Position:</label>
+                <select id="landingPosition">
+                    <option value="" selected disabled>- Select -</option>
+                    <option value="middle1">Middle Blocker 1</option>
+                    <option value="middle2">Middle Blocker 2</option>
+                    <option value="outside1">Outside Hitter 1</option>
+                    <option value="outside2">Outside Hitter 2</option>
+                    <option value="opposite">Opposite (6 Rotation)</option>
+                    <option value="setter">Setter (5-1)</option>
+                    <option value="libero">Libero</option>
+                </select>
+                <button id="landingGoBtn" type="button" class="goBtnSmall">Go</button>
+            </div>
+        </div>
+
+        <div class="landingBlurbGrid">
+            <div class="landingBlurbCard">
+                <div class="landingBlurbHeader">What VPR Is and How It Works:</div>
+                <div class="landingBlurbBody">
+                    VPR (Volleyball Performance Rating), inspired by ESPN's Quarterback Rating (QBR), condenses multiple performance statistics into a single standardized score from 0 to 1000 that represents a player’s overall on-court impact. Each statistic is evaluated relative to historical Division III Men’s positional averages. The model is trained on multi-season data from every Division III Men’s volleyball program, allowing each input to be judged against the standard for that position.
+                </div>
+            </div>
+
+            <div class="landingBlurbCard">
+                <div class="landingBlurbHeader">Entering Data and Generating a VPR:</div>
+                <div class="landingBlurbBody">
+                    Select a position model and input a player’s statistics to generate a VPR based on expected performance for that role. Statistic timeframes can range from a single set to a full season or career, but all inputs must come from the same timeframe. Larger timeframe samples will produce more stable results compared to those of a shorter timeframe. Most inputs are entered as “per set” values; however, certain statistics, such as serving, are entered in the form of "per attempt". For example, total aces should be divided by total serve attempts to calculate your “aces per attempt” figure before inputting.
+                </div>
+            </div>
+
+            <div class="landingBlurbCard">
+                <div class="landingBlurbHeader">Weights, Comparisons, and Best Use:</div>
+                <div class="landingBlurbBody">
+                    Recommended weights are preset to reflect typical positional responsibilities, however users may adjust them via weight sliders to match system emphasis or coaching philosophy. Weight for any performance category can be set to 0 to ignore statistics from that category, however the sum of all the weights must always equal 100%. When comparing players, they should be evaluated using the same positional model and weighting structure to ensure fairness in evaluation. VPR is best used as a comparative tool to support overall player evaluation, lineup decisions, and to measure player development over time. Clean, consistent data produces the most reliable results.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="landingCredit">VPR Software (1.3.0) by Ian Rauh</div>
+</div>
+
+<!-- ===================== CALCULATOR PAGE ===================== -->
+<div id="calculatorPage" class="hidden">
+    <div class="pageContainer">
+
+        <div class="input-row">
+            <label for="position">Select Position:</label>
+            <select id="position">
+                <option value="landing">- Home -</option>
+                <option value="middle1">Middle Blocker 1</option>
+                <option value="middle2">Middle Blocker 2</option>
+                <option value="outside1">Outside Hitter 1</option>
+                <option value="outside2">Outside Hitter 2</option>
+                <option value="opposite">Opposite (6 Rotation)</option>
+                <option value="setter">Setter (5-1)</option>
+                <option value="libero">Libero</option>
+            </select>
+            <button id="positionGoBtn" type="button" class="goBtnSmall">Go</button>
+        </div>
+
+        <!-- NEW: Model header + page break line -->
+        <div id="modelHeaderWrap" class="hidden">
+            <div id="modelHeaderText"></div>
+            <hr id="modelHeaderLine">
+        </div>
+
+        <div id="attacking" class="category">
+            <h2>Attacking Performance</h2>
+
+            <div class="fieldRow">
+                <label for="kills">Kills/Set:</label>
+                <input type="number" id="kills" min="0" step="0.01" placeholder="1.11">
+                <div class="errorMessage" id="err_kills"></div>
+            </div>
+
+            <div class="fieldRow">
+                <label for="hitPct">Hitting %:</label>
+                <input type="number" id="hitPct" min="-1" max="1" step="0.001" placeholder="0.333">
+                <div class="errorMessage" id="err_hitPct"></div>
+            </div>
+
+            <div class="fieldRow">
+                <label for="killPct">Kill %:</label>
+                <input type="number" id="killPct" min="-1" max="1" step="0.001" placeholder="0.444">
+                <div class="errorMessage" id="err_killPct"></div>
+            </div>
+
+            <div class="scoreDisplay" id="attackingScore">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_attacking">
+                <span id="l_attacking">0%</span>
+            </div>
+        </div>
+
+        <div id="blockingCombined" class="category">
+            <h2>Blocking Performance</h2>
+
+            <div class="fieldRow">
+                <label for="blocks">Blocks/Set:</label>
+                <input type="number" id="blocks" min="0" step="0.01" placeholder="0.33">
+                <div class="errorMessage" id="err_blocks"></div>
+            </div>
+
+            <div class="scoreDisplay" id="blockingScore">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_blocking">
+                <span id="l_blocking">0%</span>
+            </div>
+        </div>
+
+        <div id="blockingMiddle" class="category hidden">
+            <h2>Blocking Performance</h2>
+
+            <div class="fieldRow">
+                <label for="soloBlocks">Solo Blocks/Set:</label>
+                <input type="number" id="soloBlocks" min="0" step="0.01" placeholder="0.11">
+                <div class="errorMessage" id="err_soloBlocks"></div>
+            </div>
+
+            <div class="fieldRow">
+                <label for="assistBlocks">Assist Blocks/Set:</label>
+                <input type="number" id="assistBlocks" min="0" step="0.01" placeholder="0.33">
+                <div class="errorMessage" id="err_assistBlocks"></div>
+            </div>
+
+            <div class="scoreDisplay" id="blockingScoreMiddle">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_blockingMiddle">
+                <span id="l_blockingMiddle">0%</span>
+            </div>
+        </div>
+
+        <div id="serving" class="category">
+            <h2>Serving Performance</h2>
+
+            <div class="fieldRow">
+                <label for="aces">Aces/Attempt:</label>
+                <input type="number" id="aces" min="0" max="1" step="0.01" placeholder="0.11">
+                <div class="errorMessage" id="err_aces"></div>
+            </div>
+
+            <div class="fieldRow">
+                <label for="serveErrors">Errors/Attempt:</label>
+                <input type="number" id="serveErrors" min="0" max="1" step="0.01" placeholder="0.22">
+                <div class="errorMessage" id="err_serveErrors"></div>
+            </div>
+
+            <div class="scoreDisplay" id="servingScore">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_serving">
+                <span id="l_serving">0%</span>
+            </div>
+        </div>
+
+        <div id="defense" class="category">
+            <h2>Defense Performance</h2>
+
+            <div class="fieldRow">
+                <label for="digs">Digs/Set:</label>
+                <input type="number" id="digs" min="0" step="0.01" placeholder="1.11">
+                <div class="errorMessage" id="err_digs"></div>
+            </div>
+
+            <div class="scoreDisplay" id="defenseScore">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_defense">
+                <span id="l_defense">0%</span>
+            </div>
+        </div>
+
+        <div id="receive" class="category hidden">
+            <h2>Serve Receive Performance</h2>
+
+            <div class="fieldRow">
+                <label for="reception">Reception Rating:</label>
+                <input type="number" id="reception" min="0" max="4" step="0.01" placeholder="3.33">
+                <div class="errorMessage" id="err_reception"></div>
+            </div>
+
+            <div class="scoreDisplay" id="receiveScore">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_receive">
+                <span id="l_receive">0%</span>
+            </div>
+        </div>
+
+        <div id="setting" class="category hidden">
+            <h2>Setting Performance</h2>
+
+            <div class="fieldRow">
+                <label for="assists">Assists/Set:</label>
+                <input type="number" id="assists" min="0" step="0.01" placeholder="9.99">
+                <div class="errorMessage" id="err_assists"></div>
+            </div>
+
+            <div class="scoreDisplay" id="settingScore">0</div>
+            <div class="weightRow">
+                Weight <input type="range" min="0" max="100" value="0" id="w_setting">
+                <span id="l_setting">0%</span>
+            </div>
+        </div>
+
+        <button id="calculateBtn">Calculate VPR</button>
+        <div id="vprResult"></div>
+
+        <div id="bellWrapper" class="hidden">
+            <div id="bellTopLabels">
+                <span>Below Average</span>
+                <span>Average</span>
+                <span>Elite</span>
+            </div>
+
+            <svg width="100%" height="190" viewBox="0 0 700 190">
+                <path id="bellOutline" fill="none" stroke="#999" stroke-width="2"/>
+                <path id="bellFill" fill="#2b7a2b" opacity="0.35"/>
+                <line id="bellMarker" y1="25" y2="185" stroke="#2b7a2b" stroke-width="2"/>
+            </svg>
+
+            <div id="bellBottomLabels">
+                <span>0th percentile</span>
+                <span>50th percentile</span>
+                <span>100th percentile</span>
+            </div>
+        </div>
+
+        <button id="clearBtn" type="button">- Clear -</button>
+
+    </div>
+</div>
+
+<script>
+// ===== Landing/Page Switching =====
+const landingPage = document.getElementById("landingPage");
+const calculatorPage = document.getElementById("calculatorPage");
+const landingPosition = document.getElementById("landingPosition");
+const position = document.getElementById("position");
+
+const landingGoBtn = document.getElementById("landingGoBtn");
+const positionGoBtn = document.getElementById("positionGoBtn");
+
+// NEW: model header elements
+const modelHeaderWrap = document.getElementById("modelHeaderWrap");
+const modelHeaderText = document.getElementById("modelHeaderText");
+
+// Access code elements
+const accessWrap = document.getElementById("accessWrap");
+const accessRow = document.getElementById("accessRow");
+const accessCodeInput = document.getElementById("accessCode");
+const accessBtn = document.getElementById("accessBtn");
+const accessError = document.getElementById("accessError");
+const accessGranted = document.getElementById("accessGranted");
+
+// Access code config
+const ACCESS_CODE = "Password"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
+const ACCESS_FLAG_KEY = "vpr_access_granted";
+const ACCESS_TOAST_SHOWN_KEY = "vpr_access_toast_shown";
+
+/* NEW: model label names for header */
+const modelNameByValue = {
+    middle1: "Middle Blocker 1 Model",
+    middle2: "Middle Blocker 2 Model",
+    outside1: "Outside Hitter 1 Model",
+    outside2: "Outside Hitter 2 Model",
+    opposite: "Opposite (6 Rotation) Model",
+    setter: "Setter (5-1) Model",
+    libero: "Libero Model"
+};
+
+function updateModelHeader(posValue){
+    if (!posValue || posValue === "landing") {
+        modelHeaderWrap.classList.add("hidden");
+        modelHeaderText.innerText = "";
+        return;
+    }
+    modelHeaderText.innerText = modelNameByValue[posValue] || "Selected Model";
+    modelHeaderWrap.classList.remove("hidden");
+}
+
+function setLandingAccessUI(isGranted) {
+    landingPosition.disabled = !isGranted;
+    landingGoBtn.disabled = !isGranted;
+
+    if (isGranted) {
+        accessError.innerText = "";
+        accessCodeInput.value = "";
+
+        const toastShown = sessionStorage.getItem(ACCESS_TOAST_SHOWN_KEY) === "1";
+        if (toastShown) {
+            accessWrap.classList.add("hidden");
+        } else {
+            accessWrap.classList.remove("hidden");
+            accessRow.classList.remove("hidden");
+            accessGranted.classList.add("hidden");
+        }
+    } else {
+        accessWrap.classList.remove("hidden");
+        accessRow.classList.remove("hidden");
+        accessGranted.classList.add("hidden");
+    }
+}
+
+function hasAccess() {
+    return sessionStorage.getItem(ACCESS_FLAG_KEY) === "1";
+}
+
+function grantAccess() {
+    sessionStorage.setItem(ACCESS_FLAG_KEY, "1");
+}
+
+function showAccessGrantedToastThenHide() {
+    accessWrap.classList.remove("hidden");
+    accessError.innerText = "";
+    accessRow.classList.add("hidden");
+    accessGranted.classList.remove("hidden");
+    sessionStorage.setItem(ACCESS_TOAST_SHOWN_KEY, "1");
+
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            accessWrap.classList.add("hidden");
+        }, 1200);
+    });
+}
+
+function tryValidateAccess() {
+    const val = (accessCodeInput.value || "").trim();
+
+    if (val === ACCESS_CODE) {
+        grantAccess();
+        landingPosition.disabled = false;
+        landingGoBtn.disabled = false;
+
+        accessError.innerText = "";
+        accessCodeInput.value = "";
+
+        showAccessGrantedToastThenHide();
+    } else {
+        accessError.innerText = "Error: Incorrect";
+    }
+}
+
+function showCalculatorFor(pos){
+    landingPage.classList.add("hidden");
+    calculatorPage.classList.remove("hidden");
+
+    position.value = pos;
+    updateModelHeader(pos);
+    updateForm();
+    initializeWeights(pos);
+    clearInputs();
+}
+
+function showLanding(){
+    calculatorPage.classList.add("hidden");
+    landingPage.classList.remove("hidden");
+
+    landingPosition.value = "";
+    position.value = "middle1";
+
+    clearInputs();
+    setLandingAccessUI(hasAccess());
+}
+
+// Landing requires clicking Go
+landingGoBtn.addEventListener("click", () => {
+    if (!hasAccess()) return;
+    const pos = landingPosition.value;
+    if (!pos) {
+        alert("Select a position, then click Go.");
+        return;
+    }
+    showCalculatorFor(pos);
+});
+
+// Access button
+accessBtn.addEventListener("click", () => {
+    tryValidateAccess();
+});
+
+// Clear access error while typing
+accessCodeInput.addEventListener("input", () => {
+    accessError.innerText = "";
+});
+
+// Default recommended weights per position
+const defaultWeights = {
+    middle1: { attacking: 55, blockingMiddle: 35, serving: 5, defense: 5 },
+    middle2: { attacking: 50, blockingMiddle: 40, serving: 5, defense: 5 },
+    outside1: { attacking: 40, blockingCombined: 10, serving: 25, defense: 5, receive: 20 },
+    outside2: { attacking: 20, blockingCombined: 5, serving: 15, defense: 20, receive: 40 },
+    opposite: { attacking: 55, blockingCombined: 35, serving: 5, defense: 5 },
+    setter: { attacking: 20, blockingCombined: 20, serving: 20, defense: 20, setting: 20 },
+    libero: { defense: 50, receive: 50 }
+};
+
+// ======== Models ========
+const models = {
+middle1:{stats:{kills:{mean:1.42,std:0.68},hitPct:{mean:0.328,std:0.178},killPct:{mean:0.465,std:0.129},soloBlocks:{mean:0.15,std:0.08},assistBlocks:{mean:0.36,std:0.18},aces:{mean:0.06,std:0.07},serveErrors:{mean:0.22,std:0.16},digs:{mean:0.39,std:0.34}},categories:[["kills","hitPct","killPct"],["soloBlocks","assistBlocks"],["aces","serveErrors"],["digs"]]},
+middle2:{stats:{kills:{mean:1.42,std:0.68},hitPct:{mean:0.328,std:0.178},killPct:{mean:0.465,std:0.129},soloBlocks:{mean:0.15,std:0.08},assistBlocks:{mean:0.36,std:0.18},aces:{mean:0.06,std:0.07},serveErrors:{mean:0.22,std:0.16},digs:{mean:0.39,std:0.34}},categories:[["kills","hitPct","killPct"],["soloBlocks","assistBlocks"],["aces","serveErrors"],["digs"]]},
+outside1:{stats:{kills:{mean:2.09,std:1.33},hitPct:{mean:0.170,std:0.176},killPct:{mean:0.381,std:0.122},blocks:{mean:0.23,std:0.20},aces:{mean:0.07,std:0.08},serveErrors:{mean:0.22,std:0.14},digs:{mean:1.31,std:0.68},reception:{mean:1.91,std:0.77}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"],["reception"]]},
+outside2:{stats:{kills:{mean:2.09,std:1.33},hitPct:{mean:0.170,std:0.176},killPct:{mean:0.381,std:0.122},blocks:{mean:0.23,std:0.20},aces:{mean:0.07,std:0.08},serveErrors:{mean:0.22,std:0.14},digs:{mean:1.31,std:0.68},reception:{mean:1.91,std:0.77}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"],["reception"]]},
+opposite:{stats:{kills:{mean:1.98,std:1.24},hitPct:{mean:0.175,std:0.172},killPct:{mean:0.379,std:0.109},blocks:{mean:0.30,std:0.20},aces:{mean:0.86,std:0.72},serveErrors:{mean:0.19,std:0.17},digs:{mean:1.06,std:0.7}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"]]},
+setter:{stats:{kills:{mean:0.53,std:0.59},hitPct:{mean:0.239,std:0.363},killPct:{mean:0.359,std:0.199},blocks:{mean:0.11,std:0.14},aces:{mean:0.04,std:0.04},serveErrors:{mean:0.12,std:0.08},digs:{mean:1.25,std:0.76},assists:{mean:9.83,std:0.72}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"],["assists"]]},
+libero:{stats:{digs:{mean:2.00,std:0.93},reception:{mean:2.20,std:0.40},assists:{mean:0.36,std:0.15}},categories:[["digs"],["reception"],["assists"]]}
+};
+
+// ======== Utility Functions ========
+function erf(x){
+    const sign=x>=0?1:-1;
+    x=Math.abs(x);
+    const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429;
+    const p=0.3275911;
+    const t=1/(1+p*x);
+    return sign*(1-(((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x)));
+}
+
+function percentileScore(value, mean, std){
+    let z=(value-mean)/std;
+    let p=0.5*(1+erf(z/Math.SQRT2));
+    return Math.min(Math.max(p,0),1)*1000;
+}
+
+function calculateCategoryScores(pos, inputs){
+    const m = models[pos];
+    return m.categories.map(cat => {
+        let sum = 0;
+        cat.forEach(stat => {
+            let val = inputs[stat] || 0;
+            let mean = m.stats[stat].mean;
+            let std = m.stats[stat].std;
+            if(stat === "aces" || stat === "serveErrors") val = Math.min(val, 1);
+            let p = percentileScore(val, mean, std);
+            if(stat === "serveErrors") p = 1000 - p;
+            sum += p / cat.length;
+        });
+        return sum;
+    });
+}
+
+function calculateFinalVPR(scores, weights){
+    let total=0;
+    for(let key in weights){
+        total += (scores[key]||0)*weights[key];
+    }
+    return total;
+}
+
+// ======== UI & Weights ========
+const sliderIds=["attacking","blocking","blockingMiddle","serving","defense","receive","setting"];
+function getVisibleWeightSliders(){
+    return sliderIds.filter(id=>{
+        const el=document.getElementById("w_"+id);
+        return el && !el.closest(".category").classList.contains("hidden");
+    });
+}
+
+function initializeWeights(pos){
+    const sliders = getVisibleWeightSliders();
+    sliders.forEach(id => {
+        const el = document.getElementById("w_" + id);
+        const label = document.getElementById("l_" + id);
+
+        let key = id;
+        if(id === "blocking") key = "blockingCombined";
+        if(id === "blockingMiddle") key = "blockingMiddle";
+
+        const defaultValue = defaultWeights[pos] && defaultWeights[pos][key] ? defaultWeights[pos][key] : 0;
+        el.value = defaultValue;
+        label.innerText = defaultValue + "%";
+    });
+}
+
+function updateWeights(slider){
+    const sliders=getVisibleWeightSliders();
+    let total=sliders.reduce((s,id)=>s+Number(document.getElementById("w_"+id).value),0);
+    if(total>100){
+        const overflow=total-100;
+        slider.value=Math.max(0,slider.value-overflow);
+    }
+    sliders.forEach(id=>{
+        document.getElementById("l_"+id).innerText=Math.round(document.getElementById("w_"+id).value)+"%";
+    });
+}
+
+function getNormalizedWeights(){
+    const weights={};
+    getVisibleWeightSliders().forEach(id=>{
+        weights[id]=Number(document.getElementById("w_"+id).value)/100;
+    });
+    return weights;
+}
+
+// ======== Form Handling ========
+function updateForm(){
+    const pos=position.value;
+    ["attacking","blockingCombined","blockingMiddle","serving","defense","receive","setting"].forEach(id=>{
+        document.getElementById(id).classList.add("hidden");
+    });
+
+    if(pos==="middle1" || pos==="middle2"){
+        ["attacking","blockingMiddle","serving","defense"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    }
+    if(pos==="outside1" || pos==="outside2"){
+        ["attacking","blockingCombined","serving","defense","receive"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    }
+    if(pos==="opposite"){
+        ["attacking","blockingCombined","serving","defense"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    }
+    if(pos==="setter"){
+        ["attacking","blockingCombined","serving","defense","setting"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    }
+    if(pos==="libero"){
+        ["defense","receive"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    }
+}
+
+function clearInputs() {
+    const inputs = document.querySelectorAll(".category input[type='number']");
+    inputs.forEach(input => {
+        input.value = "";
+        input.classList.remove("valid", "invalid");
+    });
+
+    const errors = document.querySelectorAll(".errorMessage");
+    errors.forEach(err => { err.innerText = ""; });
+
+    const scores = document.querySelectorAll(".scoreDisplay");
+    scores.forEach(score => { score.innerText = "0"; score.style.display = "block"; });
+
+    const bell = document.getElementById("bellWrapper");
+    if(bell) bell.classList.add("hidden");
+
+    const vpr = document.getElementById("vprResult");
+    if(vpr) vpr.innerText = "";
+}
+
+// ======== Real-time Validation ========
+function validateField(fieldId, min, max, allowNegative = false) {
+    const el = document.getElementById(fieldId);
+    const err = document.getElementById("err_" + fieldId);
+
+    const categoryId = el.closest(".category").id;
+    let sliderId = categoryId;
+    if (categoryId === "blockingCombined") sliderId = "blocking";
+    const weightEl = document.getElementById("w_" + sliderId);
+    const weightValue = weightEl ? Number(weightEl.value) : 100;
+
+    if (weightValue === 0) {
+        el.classList.remove("invalid");
+        el.classList.remove("valid");
+        err.innerText = "";
+        return true;
+    }
+
+    let val = el.value;
+    let errors = [];
+
+    if (val === "") {
+        errors.push("Weight > 0, cannot be blank");
+        el.classList.add("invalid");
+        el.classList.remove("valid");
+    } else {
+        val = parseFloat(val);
+        if (!allowNegative && val < min) errors.push("cannot be negative");
+        if (val > max) errors.push("cannot be greater than " + max);
+    }
+
+    if (errors.length === 0) {
+        el.classList.remove("invalid");
+        el.classList.add("valid");
+        err.innerText = "";
+        return true;
+    }
+
+    el.classList.add("invalid");
+    el.classList.remove("valid");
+    err.innerText = errors.join(", ");
+    return false;
+}
+
+function syncCategoryValidationByWeight(categoryId) {
+    const cat = document.getElementById(categoryId);
+    if (!cat) return;
+
+    const slider = document.getElementById("w_" + categoryId);
+    const weightValue = slider ? Number(slider.value) : 100;
+
+    const inputs = cat.querySelectorAll("input[type='number']");
+    inputs.forEach(input => {
+        const err = document.getElementById("err_" + input.id);
+        if (weightValue === 0) {
+            input.classList.remove("invalid", "valid");
+            if (err) err.innerText = "";
+        } else {
+            const rule = validationRules[input.id];
+            if (rule) validateField(input.id, rule.min, rule.max, rule.allowNegative);
+        }
+    });
+}
+
+const validationRules = {
+    kills:{min:0,max:15,allowNegative:false},
+    hitPct:{min:-1,max:1,allowNegative:true},
+    killPct:{min:-1,max:1,allowNegative:true},
+    soloBlocks:{min:0,max:10,allowNegative:false},
+    assistBlocks:{min:0,max:10,allowNegative:false},
+    blocks:{min:0,max:10,allowNegative:false},
+    aces:{min:0,max:1,allowNegative:false},
+    serveErrors:{min:0,max:1,allowNegative:false},
+    digs:{min:0,max:10,allowNegative:false},
+    reception:{min:0,max:4,allowNegative:false},
+    assists:{min:0,max:20,allowNegative:false}
+};
+
+function stepToDecimals(stepStr) {
+    const s = (stepStr || "").toString();
+    if (!s.includes(".")) return 0;
+    return s.split(".")[1].length;
+}
+
+function formatToStepDecimals(inputEl) {
+    if (!inputEl) return;
+    const raw = (inputEl.value || "").trim();
+    if (raw === "") return;
+    const num = Number(raw);
+    if (!Number.isFinite(num)) return;
+    const decimals = stepToDecimals(inputEl.getAttribute("step"));
+    inputEl.value = num.toFixed(decimals);
+}
+
+function attachValidation(){
+    const fields = Object.entries(validationRules).map(([id, r]) => ({ id, ...r }));
+    fields.forEach(f=>{
+        const el=document.getElementById(f.id);
+        if(!el) return;
+
+        el.addEventListener("input",()=>validateField(f.id,f.min,f.max,f.allowNegative));
+
+        el.addEventListener("blur", () => {
+            formatToStepDecimals(el);
+            validateField(f.id,f.min,f.max,f.allowNegative);
+        });
+
+        el.addEventListener("keydown",e=>{
+            if(!f.allowNegative && e.key==='-'){e.preventDefault();}
+        });
+    });
+}
+
+// ======== Main ========
+window.onload = () => {
+    attachValidation();
+
+    landingPage.classList.remove("hidden");
+    calculatorPage.classList.add("hidden");
+
+    setLandingAccessUI(hasAccess());
+};
+
+["w_attacking","w_blocking","w_blockingMiddle","w_serving","w_defense","w_receive","w_setting"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+
+    el.addEventListener("input", () => {
+        updateWeights(el);
+
+        const categoryId = id.replace("w_", "");
+        if (categoryId === "blocking") {
+            syncCategoryValidationByWeight("blockingCombined");
+        } else {
+            syncCategoryValidationByWeight(categoryId);
+        }
+    });
+});
+
+// Calculator dropdown requires Go. This is where we set the header too.
+positionGoBtn.addEventListener("click", () => {
+    const selected = position.value;
+
+    if (selected === "landing") {
+        showLanding();
+        return;
+    }
+
+    updateModelHeader(selected);
+    updateForm();
+    initializeWeights(selected);
+    clearInputs();
+});
+
+function writeCategoryScores(pos, scores){
+    const sliders = getVisibleWeightSliders();
+    const map = {};
+
+    sliders.forEach((id) => {
+        if (id === "blockingMiddle") map[id] = "blockingScoreMiddle";
+        else if (id === "blocking") map[id] = "blockingScore";
+        else if (id === "attacking") map[id] = "attackingScore";
+        else if (id === "serving") map[id] = "servingScore";
+        else if (id === "defense") map[id] = "defenseScore";
+        else if (id === "receive") map[id] = "receiveScore";
+        else if (id === "setting") map[id] = "settingScore";
+    });
+
+    sliders.forEach(id => {
+        const el = document.getElementById(map[id]);
+        if (el) {
+            if (Number(document.getElementById("w_" + id).value) === 0) {
+                el.style.display = "none";
+            } else {
+                el.style.display = "block";
+                el.innerText = scores[sliders.indexOf(id)].toFixed(0);
+            }
+        }
+    });
+}
+
+document.getElementById("calculateBtn").addEventListener("click", () => {
+    const sliders = getVisibleWeightSliders();
+    const errors = [];
+
+    const categoryNameById = {
+        attacking: "Attacking Performance",
+        blocking: "Blocking Performance",
+        blockingCombined: "Blocking Performance",
+        blockingMiddle: "Blocking Performance",
+        serving: "Serving Performance",
+        defense: "Defense Performance",
+        receive: "Serve Receive Performance",
+        setting: "Setting Performance"
+    };
+
+    const totalWeight = sliders.reduce((s, id) => s + Number(document.getElementById("w_" + id).value), 0);
+    if (totalWeight !== 100) errors.push("Error: Weights must sum to 100%.");
+
+    const invalidCategories = new Set();
+
+    sliders.forEach((sliderId) => {
+        const weight = Number(document.getElementById("w_" + sliderId).value);
+        if (weight === 0) return;
+
+        const categoryDomId = (sliderId === "blocking") ? "blockingCombined" : sliderId;
+        const catEl = document.getElementById(categoryDomId);
+        if (!catEl) return;
+
+        const hasInvalidInput = catEl.querySelector("input.invalid") !== null;
+        const hasErrorText = Array.from(catEl.querySelectorAll(".errorMessage"))
+            .some(e => (e.innerText || "").trim().length > 0);
+
+        if (hasInvalidInput || hasErrorText) {
+            invalidCategories.add(categoryNameById[categoryDomId] || categoryNameById[sliderId] || "a category");
+        }
+    });
+
+    if (invalidCategories.size > 0) {
+        invalidCategories.forEach((catName) => {
+            errors.push("Error: Invalid field in " + catName + ". See red error text.");
+        });
+        alert(errors.join("\n\n"));
+        return;
+    }
+
+    const pos = position.value;
+    const m = models[pos];
+    const inputsValues = {};
+    const invalidCategoriesFromClick = new Set();
+
+    sliders.forEach((id, idx) => {
+        const weight = Number(document.getElementById("w_" + id).value);
+        if (weight === 0) return;
+
+        const categoryDomId = (id === "blocking") ? "blockingCombined" : id;
+
+        m.categories[idx].forEach((stat) => {
+            const rules = validationRules[stat];
+            const valEl = document.getElementById(stat);
+            const val = valEl ? valEl.value : "";
+
+            if (val === "") {
+                invalidCategoriesFromClick.add(categoryNameById[categoryDomId] || "a category");
+            } else {
+                const num = parseFloat(val);
+                if (!rules.allowNegative && num < 0) invalidCategoriesFromClick.add(categoryNameById[categoryDomId] || "a category");
+                else if (num > rules.max) invalidCategoriesFromClick.add(categoryNameById[categoryDomId] || "a category");
+            }
+
+            inputsValues[stat] = parseFloat(val || 0);
+        });
+    });
+
+    if (invalidCategoriesFromClick.size > 0) {
+        invalidCategoriesFromClick.forEach((catName) => {
+            errors.push("Error: Invalid field in " + catName + ". See red error text.");
+        });
+    }
+
+    if (errors.length > 0) {
+        alert(errors.join("\n\n"));
+        return;
+    }
+
+    const scores = calculateCategoryScores(pos, inputsValues);
+
+    const slidersVisible = getVisibleWeightSliders();
+    const scoreMap = {};
+    slidersVisible.forEach((id, idx) => {
+        scoreMap[id] = scores[idx] || 0;
+    });
+
+    writeCategoryScores(pos, scores);
+
+    const final = calculateFinalVPR(scoreMap, getNormalizedWeights());
+    vprResult.innerText = "VPR: " + Math.round(final);
+
+    drawBellCurve(final);
+});
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+    clearInputs();
+    initializeWeights(position.value);
+
+    getVisibleWeightSliders().forEach(id => {
+        document.getElementById("l_" + id).innerText = Math.round(document.getElementById("w_" + id).value) + "%";
+    });
+});
+
+// Enter key behavior
+document.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+
+    const activeEl = document.activeElement;
+
+    if (activeEl && activeEl.id === "accessCode") {
+        e.preventDefault();
+        tryValidateAccess();
+        return;
+    }
+
+    if (activeEl && activeEl.tagName === "SELECT") return;
+
+    e.preventDefault();
+    document.getElementById("calculateBtn").click();
+});
+
+// ===== Bell Curve =====
+function drawBellCurve(vpr){
+    const percentile = Math.max(0, Math.min(vpr / 1000, 1));
+    const width = 700;
+    const baseY = 185;
+    const center = width / 2;
+    const std = width / 5;
+
+    let outline = "";
+    let fill = "M 0 " + baseY + " ";
+
+    for(let x=0;x<=width;x++){
+        const y = baseY - Math.exp(-0.5 * Math.pow((x-center)/std,2)) * 140;
+        outline += (x===0?"M ":" L ") + x + " " + y;
+        if(x <= percentile * width){
+            fill += "L " + x + " " + y + " ";
+        }
+    }
+
+    fill += "L " + (percentile * width) + " " + baseY + " Z";
+
+    document.getElementById("bellOutline").setAttribute("d", outline);
+    document.getElementById("bellFill").setAttribute("d", fill);
+
+    const markerX = percentile * width;
+    document.getElementById("bellMarker").setAttribute("x1", markerX);
+    document.getElementById("bellMarker").setAttribute("x2", markerX);
+
+    document.getElementById("bellWrapper").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
