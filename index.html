@@ -908,7 +908,7 @@ const accessError = document.getElementById("accessError");
 const accessGranted = document.getElementById("accessGranted");
 
 // Access code config
-const ACCESS_CODE = "BetaTesting1"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
+const ACCESS_CODE = "BetaTesting"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
 const ACCESS_FLAG_KEY = "vpr_access_granted";
 const ACCESS_TOAST_SHOWN_KEY = "vpr_access_toast_shown";
 
@@ -991,7 +991,7 @@ function tryValidateAccess() {
 
         showAccessGrantedToastThenHide();
     } else {
-        accessError.innerText = "Error: Incorrect";
+        accessError.innerText = "Error: Incorrect Code, Try Again";
     }
 }
 
