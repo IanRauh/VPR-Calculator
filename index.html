@@ -98,7 +98,7 @@ input[type=number]::-webkit-outer-spin-button {
 input.invalid { border: 2px solid red; }
 input.valid { border: 1px solid #ccc; }
 
-select { 
+select {
     width: 176px;
     margin-bottom: 20px;
 }
@@ -163,11 +163,11 @@ button:hover {
     background: #4b5563;
 }
 
-#vprResult { 
-    text-align: center; 
-    font-size: 52px; 
-    font-weight: bold; 
-    color: #2b7a2b; 
+#vprResult {
+    text-align: center;
+    font-size: 52px;
+    font-weight: bold;
+    color: #2b7a2b;
 }
 
 .hidden { display: none; }
@@ -223,6 +223,27 @@ button:hover {
 #bellWrapper svg {
     display: block;
     margin-bottom: 0px;
+}
+
+/* Score label */
+#bellScoreLabel{
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    fill: #2b7a2b;
+    paint-order: stroke;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+/* Fraction bar inside the SVG (separate element so it is always controllable) */
+#bellScoreBar{
+    stroke: #2b7a2b;
+    stroke-width: 2;
+    stroke-linecap: round;
+    paint-order: stroke;
+    stroke-linejoin: round;
 }
 
 /* Position selector row */
@@ -484,16 +505,21 @@ button:disabled{
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     width: 16px;
     height: 16px;
+
     margin-left: 6px;
-    border-radius: 999px;
+
+    border-radius: 4px;
     background: #e5e7eb;
     color: #111827;
-    font-size: 12px;
+
+    font-size: 11px;
     font-weight: 800;
     line-height: 1;
     vertical-align: middle;
+
     outline: none;
 }
 
@@ -501,17 +527,23 @@ button:disabled{
     position: absolute;
     left: 0;
     top: 100%;
-    transform: translateY(8px);
+    transform: translateY(6px);
     z-index: 50;
-    min-width: 260px;
-    max-width: 330px;
+
+    min-width: 220px;
+    max-width: 280px;
+
     background: #111827;
     color: #ffffff;
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-size: 12px;
-    line-height: 1.35;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.20);
+
+    padding: 8px 10px;
+    border-radius: 8px;
+
+    font-size: 11px;
+    line-height: 1.3;
+
+    box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -522,9 +554,7 @@ button:disabled{
     font-weight: 800;
 }
 
-/* Show tooltip ONLY when hovering/focusing the ? icon */
-.tipIcon:hover + .tipBox,
-.tipIcon:focus + .tipBox{
+.tipIcon:hover + .tipBox{
     opacity: 1;
     visibility: visible;
 }
@@ -580,27 +610,27 @@ button:disabled{
             <div class="landingBlurbCard">
                 <div class="landingBlurbHeader">What VPR Is and How It Works:</div>
                 <div class="landingBlurbBody">
-                    VPR (Volleyball Performance Rating), inspired by ESPN's Quarterback Rating (QBR), condenses multiple performance statistics into a single standardized score from 0 to 1000 that represents a player’s overall on-court impact. Each statistic is evaluated relative to historical Division III Men’s positional averages. The model is trained on multi-season data from every Division III Men’s volleyball program, allowing each input to be judged against the standard for that position.
+                    VPR (Volleyball Performance Rating), inspired by ESPN's Quarterback Rating (QBR), condenses multiple performance statistics into a single standardized score from 0 to 1000 that quantifies a player’s overall on-court impact. Each statistic is evaluated relative to historical Division III Men’s positional averages. The model is trained on multi-season data from every Division III Men’s volleyball program, allowing each input to be judged against the standard for that position.
                 </div>
             </div>
 
             <div class="landingBlurbCard">
                 <div class="landingBlurbHeader">Entering Data and Generating a VPR:</div>
                 <div class="landingBlurbBody">
-                    Select a position model and input a player’s statistics to generate a VPR based on expected performance for that role. Statistic timeframes can range from a single set to a full season or career, but all inputs must come from the same timeframe. Larger timeframe samples will produce more stable results compared to those of a shorter timeframe. Most inputs are entered as “per set” values; however, certain statistics, such as serving, are entered in the form of "per attempt". For example, total aces should be divided by total serve attempts to calculate your “aces per attempt” figure before inputting.
+                    Select a position model and input a player’s statistics to generate a VPR based on expected performance for that role. <br><br> Statistic timeframes can range from a single set to a full season or career, but all inputs must come from the same timeframe. Larger timeframe samples will produce more stable results compared to those of a shorter timeframe. <br><br> Most inputs are entered as “per set” values; however, certain statistics, such as serving, are entered in the form of "per attempt". For example, total aces should be divided by total serve attempts to calculate your “aces per attempt” figure before inputting.
                 </div>
             </div>
 
             <div class="landingBlurbCard">
                 <div class="landingBlurbHeader">Weights, Comparisons, and Best Use:</div>
                 <div class="landingBlurbBody">
-                    Recommended weights are preset to reflect typical positional responsibilities, however users may adjust them via weight sliders to match system emphasis or coaching philosophy. Weight for any performance category can be set to 0 to ignore statistics from that category, however the sum of all the weights must always equal 100%. When comparing players, they should be evaluated using the same positional model and weighting structure to ensure fairness in evaluation. VPR is best used as a comparative tool to support overall player evaluation, lineup decisions, and to measure player development over time. Clean, consistent data produces the most reliable results.
+                    Recommended weights are preset to reflect typical positional responsibilities, however users may adjust them via weight sliders to match system emphasis or coaching philosophy. Weight for any performance category can be set to 0 to ignore statistics from that category, however the sum of all the weights must always equal 100%. When comparing players, they should be evaluated using the same positional model and weighting structure to ensure fairness in evaluation. <br><br> VPR is best used as a comparative tool to support overall player evaluation, lineup decisions, and to measure player development over time. Clean, consistent data produces the most reliable results.
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="landingCredit">VPR Software (2.3.0) by Ian Rauh</div>
+    <div class="landingCredit">VPR Software (2.3.1) by Ian Rauh</div>
 </div>
 
 <!-- ===================== CALCULATOR PAGE ===================== -->
@@ -634,7 +664,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="kills" class="statTip">
                     Kills/Set
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Average number of kills per set.<br><br>
                         <strong>How to calculate:</strong> Total kills / total sets played.<br><br>
@@ -648,7 +678,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="hitPct" class="statTip">
                     Hitting %
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Efficiency of your swings.<br><br>
                         <strong>How to calculate:</strong> (Kills − Errors) / Total Attempts.<br><br>
@@ -662,7 +692,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="killPct" class="statTip">
                     Kill %
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Percent of swings that become kills.<br><br>
                         <strong>How to calculate:</strong> Kills / Total Attempts.<br><br>
@@ -675,7 +705,7 @@ button:disabled{
 
             <div class="scoreDisplay" id="attackingScore">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_attacking">
+                Weight <input type="range" min="0" max="100" value="0" id="w_attacking" tabindex="-1">
                 <span id="l_attacking">0%</span>
             </div>
         </div>
@@ -686,7 +716,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="blocks" class="statTip">
                     Blocks/Set
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Average total blocks per set.<br><br>
                         <strong>How to calculate:</strong> Total blocks (solo + assist) / total sets played.<br><br>
@@ -699,7 +729,7 @@ button:disabled{
 
             <div class="scoreDisplay" id="blockingScore">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_blocking">
+                Weight <input type="range" min="0" max="100" value="0" id="w_blocking" tabindex="-1">
                 <span id="l_blocking">0%</span>
             </div>
         </div>
@@ -710,7 +740,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="soloBlocks" class="statTip">
                     Solo Blocks/Set
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Average solo blocks per set.<br><br>
                         <strong>How to calculate:</strong> Total solo blocks / total sets played.<br><br>
@@ -724,7 +754,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="assistBlocks" class="statTip">
                     Assist Blocks/Set
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Average assist blocks per set.<br><br>
                         <strong>How to calculate:</strong> Total block assists / total sets played.<br><br>
@@ -737,7 +767,7 @@ button:disabled{
 
             <div class="scoreDisplay" id="blockingScoreMiddle">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_blockingMiddle">
+                Weight <input type="range" min="0" max="100" value="0" id="w_blockingMiddle" tabindex="-1">
                 <span id="l_blockingMiddle">0%</span>
             </div>
         </div>
@@ -748,7 +778,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="aces" class="statTip">
                     Aces/Attempt
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> The ratio of aces to total serve attempts.<br><br>
                         <strong>How to calculate:</strong> Total aces / total serve attempts.<br><br>
@@ -762,7 +792,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="serveErrors" class="statTip">
                     Errors/Attempt
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> The ratio of service errors to total serve attempts.<br><br>
                         <strong>How to calculate:</strong> Total service errors / total service attempts.<br><br>
@@ -775,7 +805,7 @@ button:disabled{
 
             <div class="scoreDisplay" id="servingScore">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_serving">
+                Weight <input type="range" min="0" max="100" value="0" id="w_serving" tabindex="-1">
                 <span id="l_serving">0%</span>
             </div>
         </div>
@@ -786,7 +816,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="digs" class="statTip">
                     Digs/Set
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Average digs per set.<br><br>
                         <strong>How to calculate:</strong> Total digs / total sets played.<br><br>
@@ -799,7 +829,7 @@ button:disabled{
 
             <div class="scoreDisplay" id="defenseScore">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_defense">
+                Weight <input type="range" min="0" max="100" value="0" id="w_defense" tabindex="-1">
                 <span id="l_defense">0%</span>
             </div>
         </div>
@@ -810,25 +840,24 @@ button:disabled{
             <div class="fieldRow">
                 <label for="reception" class="statTip">
                     Reception Rating
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong><br>
-                        4 - Perfect Pass, all offensive options available.<br>
-                        3 - Good: Slightly off-target but still in system.<br>
-                        2 - Out-of-System: only high-ball options.<br>
-                        1 - Bad/Overpass: Shanked or overpassed ball that’s barely playable.<br>
+                        3 - Perfect Pass, all offensive options available.<br>
+                        2 - Good: Slightly off-target but still in system.<br>
+                        1 - Out-of-System: only high-ball options.<br>
                         0 - Error: Ace or unplayable pass.<br><br>
-                        <strong>How to calculate:</strong> Using the 0-4 pass rating scale. Sum of all pass ratings / total receptions.<br><br>
-                        <strong>Acceptable Value Range:</strong> 0.00 - 4.00
+                        <strong>How to calculate:</strong> Using the 0-3 pass rating scale. Sum of all pass ratings / total receptions.<br><br>
+                        <strong>Acceptable Value Range:</strong> 0.00 - 3.00
                     </span>
                 </label>
-                <input type="number" id="reception" min="0" max="4" step="0.01" placeholder="3.33">
+                <input type="number" id="reception" min="0" max="3" step="0.01" placeholder="2.22">
                 <div class="errorMessage" id="err_reception"></div>
             </div>
 
             <div class="scoreDisplay" id="receiveScore">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_receive">
+                Weight <input type="range" min="0" max="100" value="0" id="w_receive" tabindex="-1">
                 <span id="l_receive">0%</span>
             </div>
         </div>
@@ -839,7 +868,7 @@ button:disabled{
             <div class="fieldRow">
                 <label for="assists" class="statTip">
                     Assists/Set
-                    <span class="tipIcon" tabindex="0">?</span>
+                    <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Average assists per set.<br><br>
                         <strong>How to calculate:</strong> Total assists / total sets played.<br><br>
@@ -852,7 +881,7 @@ button:disabled{
 
             <div class="scoreDisplay" id="settingScore">0</div>
             <div class="weightRow">
-                Weight <input type="range" min="0" max="100" value="0" id="w_setting">
+                Weight <input type="range" min="0" max="100" value="0" id="w_setting" tabindex="-1">
                 <span id="l_setting">0%</span>
             </div>
         </div>
@@ -871,6 +900,15 @@ button:disabled{
                 <path id="bellOutline" fill="none" stroke="#999" stroke-width="2"/>
                 <path id="bellFill" fill="#2b7a2b" opacity="0.35"/>
                 <line id="bellMarker" y1="25" y2="185" stroke="#2b7a2b" stroke-width="2"/>
+
+                <!-- Fraction label -->
+                <text id="bellScoreLabel" x="0" y="14">
+                    <tspan id="bellScoreTop" x="0" y="14">0</tspan>
+                    <tspan id="bellScoreBottom" x="0" dy="12">1000</tspan>
+                </text>
+
+                <!-- Fraction bar -->
+                <line id="bellScoreBar" x1="0" y1="0" x2="0" y2="0"></line>
             </svg>
 
             <div id="bellBottomLabels">
@@ -1028,6 +1066,18 @@ landingGoBtn.addEventListener("click", () => {
     showCalculatorFor(pos);
 });
 
+// Pressing Enter on the landing page triggers Go (after access + selection)
+landingPosition.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    if (!hasAccess()) return;
+
+    const pos = landingPosition.value;
+    if (!pos) return;
+
+    e.preventDefault();
+    landingGoBtn.click();
+});
+
 // Access button
 accessBtn.addEventListener("click", () => {
     tryValidateAccess();
@@ -1055,7 +1105,7 @@ middle1:{stats:{kills:{mean:1.42,std:0.68},hitPct:{mean:0.328,std:0.178},killPct
 middle2:{stats:{kills:{mean:1.42,std:0.68},hitPct:{mean:0.328,std:0.178},killPct:{mean:0.465,std:0.129},soloBlocks:{mean:0.15,std:0.08},assistBlocks:{mean:0.36,std:0.18},aces:{mean:0.06,std:0.07},serveErrors:{mean:0.22,std:0.16},digs:{mean:0.39,std:0.34}},categories:[["kills","hitPct","killPct"],["soloBlocks","assistBlocks"],["aces","serveErrors"],["digs"]]},
 outside1:{stats:{kills:{mean:2.09,std:1.33},hitPct:{mean:0.170,std:0.176},killPct:{mean:0.381,std:0.122},blocks:{mean:0.23,std:0.20},aces:{mean:0.07,std:0.08},serveErrors:{mean:0.22,std:0.14},digs:{mean:1.31,std:0.68},reception:{mean:1.91,std:0.77}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"],["reception"]]},
 outside2:{stats:{kills:{mean:2.09,std:1.33},hitPct:{mean:0.170,std:0.176},killPct:{mean:0.381,std:0.122},blocks:{mean:0.23,std:0.20},aces:{mean:0.07,std:0.08},serveErrors:{mean:0.22,std:0.14},digs:{mean:1.31,std:0.68},reception:{mean:1.91,std:0.77}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"],["reception"]]},
-opposite:{stats:{kills:{mean:1.98,std:1.24},hitPct:{mean:0.175,std:0.172},killPct:{mean:0.379,std:0.109},blocks:{mean:0.30,std:0.20},aces:{mean:0.86,std:0.72},serveErrors:{mean:0.19,std:0.17},digs:{mean:1.06,std:0.7}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"]]},
+opposite:{stats:{kills:{mean:1.98,std:1.24},hitPct:{mean:0.175,std:0.172},killPct:{mean:0.379,std:0.109},blocks:{mean:0.30,std:0.20},aces:{mean:0.52,std:0.36},serveErrors:{mean:0.19,std:0.17},digs:{mean:1.06,std:0.7}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"]]},
 setter:{stats:{kills:{mean:0.53,std:0.59},hitPct:{mean:0.239,std:0.363},killPct:{mean:0.359,std:0.199},blocks:{mean:0.11,std:0.14},aces:{mean:0.04,std:0.04},serveErrors:{mean:0.12,std:0.08},digs:{mean:1.25,std:0.76},assists:{mean:9.83,std:0.72}},categories:[["kills","hitPct","killPct"],["blocks"],["aces","serveErrors"],["digs"],["assists"]]},
 libero:{stats:{digs:{mean:2.00,std:0.93},reception:{mean:2.20,std:0.40},assists:{mean:0.36,std:0.15}},categories:[["digs"],["reception"],["assists"]]}
 };
@@ -1212,7 +1262,7 @@ function validateField(fieldId, min, max, allowNegative = false) {
     let errors = [];
 
     if (val === "") {
-        errors.push("Weight > 0, cannot be blank");
+        errors.push("Weight is greater than 0, cannot be blank");
         el.classList.add("invalid");
         el.classList.remove("valid");
     } else {
@@ -1264,7 +1314,7 @@ const validationRules = {
     aces:{min:0,max:1,allowNegative:false},
     serveErrors:{min:0,max:1,allowNegative:false},
     digs:{min:0,max:10,allowNegative:false},
-    reception:{min:0,max:4,allowNegative:false},
+    reception:{min:0,max:3,allowNegative:false},
     assists:{min:0,max:20,allowNegative:false}
 };
 
@@ -1486,14 +1536,27 @@ document.addEventListener("keydown", (e) => {
 
     const activeEl = document.activeElement;
 
+    // If typing access code, Enter validates code
     if (activeEl && activeEl.id === "accessCode") {
         e.preventDefault();
         tryValidateAccess();
         return;
     }
 
+    // If we're on the landing page, Enter triggers Go (after access + selection)
+    const landingVisible = !landingPage.classList.contains("hidden");
+    if (landingVisible) {
+        if (hasAccess() && landingPosition.value) {
+            e.preventDefault();
+            landingGoBtn.click();
+        }
+        return;
+    }
+
+    // On calculator page, don't hijack Enter when a select is focused
     if (activeEl && activeEl.tagName === "SELECT") return;
 
+    // Otherwise Enter calculates
     e.preventDefault();
     document.getElementById("calculateBtn").click();
 });
@@ -1526,7 +1589,66 @@ function drawBellCurve(vpr){
     document.getElementById("bellMarker").setAttribute("x1", markerX);
     document.getElementById("bellMarker").setAttribute("x2", markerX);
 
-    document.getElementById("bellWrapper").classList.remove("hidden");
+    // Make visible BEFORE measuring text length
+    const bellWrap = document.getElementById("bellWrapper");
+    bellWrap.classList.remove("hidden");
+
+    // Fraction label elements
+    const label = document.getElementById("bellScoreLabel");
+    const top = document.getElementById("bellScoreTop");
+    const bottom = document.getElementById("bellScoreBottom");
+    const bar = document.getElementById("bellScoreBar");
+
+    const rounded = Math.round(vpr);
+
+    // Move the whole fraction up about 8px vs your prior 22
+    const topY = 14;
+    const bottomDy = 22;
+    const barY = topY + 6;
+
+    // Decide which side to place label
+    const placeRight = (rounded <= 500);
+
+    const pad = 22;
+    const sideOffset = 10; // how far off the marker line
+
+    let labelX;
+    let anchor;
+
+    if (placeRight) {
+        anchor = "start";
+        labelX = Math.min(markerX + sideOffset, width - pad);
+    } else {
+        anchor = "end";
+        labelX = Math.max(markerX - sideOffset, pad);
+    }
+
+    // Update text
+    top.textContent = String(rounded);
+    bottom.textContent = "1000";
+
+    // Set anchor and positions
+    label.setAttribute("text-anchor", anchor);
+
+    label.setAttribute("x", labelX);
+    label.setAttribute("y", topY);
+
+    top.setAttribute("x", labelX);
+    top.setAttribute("y", topY);
+
+    bottom.setAttribute("x", labelX);
+    bottom.setAttribute("dy", bottomDy);
+
+    // Center the fraction bar relative to the NUMBER width (works for both start/end anchors)
+    const textLen = top.getComputedTextLength();
+    const leftEdge = (anchor === "end") ? (labelX - textLen) : labelX;
+    const centerX = leftEdge + (textLen / 2);
+
+    const barWidth = Math.min(42, textLen + 8);
+    bar.setAttribute("x1", centerX - barWidth / 2);
+    bar.setAttribute("x2", centerX + barWidth / 2);
+    bar.setAttribute("y1", barY);
+    bar.setAttribute("y2", barY);
 }
 </script>
 
