@@ -588,7 +588,7 @@ button:disabled{
             <div id="accessGranted" class="hidden">Access Granted</div>
         </div>
 
-        <!-- Landing position selector requires Go -->
+        <!-- Landing position selector requires Go (unchanged) -->
         <div class="landingSelectWrap">
             <div class="input-row">
                 <label for="landingPosition">Select Position:</label>
@@ -639,6 +639,8 @@ button:disabled{
 
         <div class="input-row">
             <label for="position">Select Position:</label>
+
+            <!-- CHANGED: no Go button needed, navigation happens on change -->
             <select id="position">
                 <option value="landing">- Home -</option>
                 <option value="middle1">Middle Blocker 1</option>
@@ -649,7 +651,8 @@ button:disabled{
                 <option value="setter">Setter (5-1)</option>
                 <option value="libero">Libero</option>
             </select>
-            <button id="positionGoBtn" type="button" class="goBtnSmall">Go</button>
+
+            <!-- removed positionGoBtn -->
         </div>
 
         <!-- Model header + page break line -->
@@ -887,6 +890,7 @@ button:disabled{
         </div>
 
         <button id="calculateBtn">Calculate VPR</button>
+        <div id="globalError" class="errorMessage" style="text-align:center; font-weight:800;"></div>
         <div id="vprResult"></div>
 
         <div id="bellWrapper" class="hidden">
@@ -931,7 +935,6 @@ const landingPosition = document.getElementById("landingPosition");
 const position = document.getElementById("position");
 
 const landingGoBtn = document.getElementById("landingGoBtn");
-const positionGoBtn = document.getElementById("positionGoBtn");
 
 // model header elements
 const modelHeaderWrap = document.getElementById("modelHeaderWrap");
@@ -949,6 +952,9 @@ const accessGranted = document.getElementById("accessGranted");
 const ACCESS_CODE = "BetaTesting"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
 const ACCESS_FLAG_KEY = "vpr_access_granted";
 const ACCESS_TOAST_SHOWN_KEY = "vpr_access_toast_shown";
+
+// Validation behavior flag: only show "blank required" errors after they try to calculate
+let hasTriedCalculate = false;
 
 /* model label names for header */
 const modelNameByValue = {
@@ -1059,10 +1065,7 @@ function showLanding(){
 landingGoBtn.addEventListener("click", () => {
     if (!hasAccess()) return;
     const pos = landingPosition.value;
-    if (!pos) {
-        alert("Select a position, then click Go.");
-        return;
-    }
+    if (!pos) return;
     showCalculatorFor(pos);
 });
 
@@ -1230,6 +1233,9 @@ function clearInputs() {
     const errors = document.querySelectorAll(".errorMessage");
     errors.forEach(err => { err.innerText = ""; });
 
+    const globalError = document.getElementById("globalError");
+    if (globalError) globalError.innerText = "";
+
     const scores = document.querySelectorAll(".scoreDisplay");
     scores.forEach(score => { score.innerText = "0"; score.style.display = "block"; });
 
@@ -1238,35 +1244,54 @@ function clearInputs() {
 
     const vpr = document.getElementById("vprResult");
     if(vpr) vpr.innerText = "";
+
+    // Reset behavior for "required" errors
+    hasTriedCalculate = false;
 }
 
 // ======== Real-time Validation ========
-function validateField(fieldId, min, max, allowNegative = false) {
+function validateField(fieldId, min, max, allowNegative = false, opts = {}) {
+    const { requireNonBlank = false } = opts;
+
     const el = document.getElementById(fieldId);
     const err = document.getElementById("err_" + fieldId);
+    if (!el || !err) return true;
 
     const categoryId = el.closest(".category").id;
     let sliderId = categoryId;
     if (categoryId === "blockingCombined") sliderId = "blocking";
+
     const weightEl = document.getElementById("w_" + sliderId);
     const weightValue = weightEl ? Number(weightEl.value) : 100;
 
+    // If the category weight is 0, ignore validation entirely
     if (weightValue === 0) {
-        el.classList.remove("invalid");
-        el.classList.remove("valid");
+        el.classList.remove("invalid", "valid");
         err.innerText = "";
         return true;
     }
 
-    let val = el.value;
-    let errors = [];
+    const raw = (el.value || "").trim();
 
-    if (val === "") {
-        errors.push("Weight is greater than 0, cannot be blank");
-        el.classList.add("invalid");
-        el.classList.remove("valid");
+    if (raw === "") {
+        if (requireNonBlank) {
+            el.classList.add("invalid");
+            el.classList.remove("valid");
+            err.innerText = "Required (weight > 0)";
+            return false;
+        } else {
+            el.classList.remove("invalid", "valid");
+            err.innerText = "";
+            return true;
+        }
+    }
+
+    const val = parseFloat(raw);
+    const errors = [];
+
+    if (!Number.isFinite(val)) {
+        errors.push("invalid number");
     } else {
-        val = parseFloat(val);
         if (!allowNegative && val < min) errors.push("cannot be negative");
         if (val > max) errors.push("cannot be greater than " + max);
     }
@@ -1294,13 +1319,19 @@ function syncCategoryValidationByWeight(categoryId) {
     const inputs = cat.querySelectorAll("input[type='number']");
     inputs.forEach(input => {
         const err = document.getElementById("err_" + input.id);
+
         if (weightValue === 0) {
             input.classList.remove("invalid", "valid");
             if (err) err.innerText = "";
-        } else {
-            const rule = validationRules[input.id];
-            if (rule) validateField(input.id, rule.min, rule.max, rule.allowNegative);
+            return;
         }
+
+        const rule = validationRules[input.id];
+        if (!rule) return;
+
+        validateField(input.id, rule.min, rule.max, rule.allowNegative, {
+            requireNonBlank: hasTriedCalculate
+        });
     });
 }
 
@@ -1336,19 +1367,26 @@ function formatToStepDecimals(inputEl) {
 
 function attachValidation(){
     const fields = Object.entries(validationRules).map(([id, r]) => ({ id, ...r }));
-    fields.forEach(f=>{
-        const el=document.getElementById(f.id);
+
+    fields.forEach(f => {
+        const el = document.getElementById(f.id);
         if(!el) return;
 
-        el.addEventListener("input",()=>validateField(f.id,f.min,f.max,f.allowNegative));
+        el.addEventListener("input", () => {
+            validateField(f.id, f.min, f.max, f.allowNegative, {
+                requireNonBlank: hasTriedCalculate
+            });
+        });
 
         el.addEventListener("blur", () => {
             formatToStepDecimals(el);
-            validateField(f.id,f.min,f.max,f.allowNegative);
+            validateField(f.id, f.min, f.max, f.allowNegative, {
+                requireNonBlank: hasTriedCalculate
+            });
         });
 
-        el.addEventListener("keydown",e=>{
-            if(!f.allowNegative && e.key==='-'){e.preventDefault();}
+        el.addEventListener("keydown", e => {
+            if(!f.allowNegative && e.key === '-') e.preventDefault();
         });
     });
 }
@@ -1379,10 +1417,12 @@ window.onload = () => {
     });
 });
 
-// Calculator dropdown requires Go. This is where we set the header too.
-positionGoBtn.addEventListener("click", () => {
-    const selected = position.value;
+/* ===========================
+   CHANGED: instant navigation
+   =========================== */
+let isProgrammaticPositionSet = false;
 
+function navigateFromCalculatorSelection(selected){
     if (selected === "landing") {
         showLanding();
         return;
@@ -1392,7 +1432,39 @@ positionGoBtn.addEventListener("click", () => {
     updateForm();
     initializeWeights(selected);
     clearInputs();
+}
+
+// When user changes dropdown, navigate immediately (no Go button)
+position.addEventListener("change", () => {
+    if (isProgrammaticPositionSet) return;
+    navigateFromCalculatorSelection(position.value);
 });
+
+// Ensure programmatic sets do not retrigger navigation loops
+function showCalculatorFor(pos){
+    landingPage.classList.add("hidden");
+    calculatorPage.classList.remove("hidden");
+
+    isProgrammaticPositionSet = true;
+    position.value = pos;
+    isProgrammaticPositionSet = false;
+
+    navigateFromCalculatorSelection(pos);
+}
+
+function showLanding(){
+    calculatorPage.classList.add("hidden");
+    landingPage.classList.remove("hidden");
+
+    landingPosition.value = "";
+
+    isProgrammaticPositionSet = true;
+    position.value = "middle1";
+    isProgrammaticPositionSet = false;
+
+    clearInputs();
+    setLandingAccessUI(hasAccess());
+}
 
 function writeCategoryScores(pos, scores){
     const sliders = getVisibleWeightSliders();
@@ -1422,88 +1494,67 @@ function writeCategoryScores(pos, scores){
 }
 
 document.getElementById("calculateBtn").addEventListener("click", () => {
+    hasTriedCalculate = true;
+
+    const globalError = document.getElementById("globalError");
+    if (globalError) globalError.innerText = "";
+
     const sliders = getVisibleWeightSliders();
-    const errors = [];
 
-    const categoryNameById = {
-        attacking: "Attacking Performance",
-        blocking: "Blocking Performance",
-        blockingCombined: "Blocking Performance",
-        blockingMiddle: "Blocking Performance",
-        serving: "Serving Performance",
-        defense: "Defense Performance",
-        receive: "Serve Receive Performance",
-        setting: "Setting Performance"
-    };
-
+    // 1) Weights must sum to 100 (no popup)
     const totalWeight = sliders.reduce((s, id) => s + Number(document.getElementById("w_" + id).value), 0);
-    if (totalWeight !== 100) errors.push("Error: Weights must sum to 100%.");
-
-    const invalidCategories = new Set();
-
-    sliders.forEach((sliderId) => {
-        const weight = Number(document.getElementById("w_" + sliderId).value);
-        if (weight === 0) return;
-
-        const categoryDomId = (sliderId === "blocking") ? "blockingCombined" : sliderId;
-        const catEl = document.getElementById(categoryDomId);
-        if (!catEl) return;
-
-        const hasInvalidInput = catEl.querySelector("input.invalid") !== null;
-        const hasErrorText = Array.from(catEl.querySelectorAll(".errorMessage"))
-            .some(e => (e.innerText || "").trim().length > 0);
-
-        if (hasInvalidInput || hasErrorText) {
-            invalidCategories.add(categoryNameById[categoryDomId] || categoryNameById[sliderId] || "a category");
-        }
-    });
-
-    if (invalidCategories.size > 0) {
-        invalidCategories.forEach((catName) => {
-            errors.push("Error: Invalid field in " + catName + ". See red error text.");
-        });
-        alert(errors.join("\n\n"));
+    if (totalWeight !== 100) {
+        if (globalError) globalError.innerText = "Error: Weights must sum to 100%.";
         return;
     }
 
+    // 2) Validate only required fields (weight > 0), show blank errors now
+    let allValid = true;
+    let firstInvalidEl = null;
+
     const pos = position.value;
     const m = models[pos];
-    const inputsValues = {};
-    const invalidCategoriesFromClick = new Set();
+    if (!m) return;
 
+    sliders.forEach((sliderId, idx) => {
+        const weight = Number(document.getElementById("w_" + sliderId).value);
+        if (weight === 0) return;
+
+        const catStats = m.categories[idx] || [];
+        catStats.forEach((stat) => {
+            const rules = validationRules[stat];
+            if (!rules) return;
+
+            const ok = validateField(stat, rules.min, rules.max, rules.allowNegative, {
+                requireNonBlank: true
+            });
+
+            if (!ok) {
+                allValid = false;
+                if (!firstInvalidEl) firstInvalidEl = document.getElementById(stat);
+            }
+        });
+    });
+
+    if (!allValid) {
+        if (firstInvalidEl) {
+            firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            firstInvalidEl.focus({ preventScroll: true });
+        }
+        return;
+    }
+
+    // 3) Proceed with existing calculations
+    const inputsValues = {};
     sliders.forEach((id, idx) => {
         const weight = Number(document.getElementById("w_" + id).value);
         if (weight === 0) return;
 
-        const categoryDomId = (id === "blocking") ? "blockingCombined" : id;
-
-        m.categories[idx].forEach((stat) => {
-            const rules = validationRules[stat];
+        (m.categories[idx] || []).forEach((stat) => {
             const valEl = document.getElementById(stat);
-            const val = valEl ? valEl.value : "";
-
-            if (val === "") {
-                invalidCategoriesFromClick.add(categoryNameById[categoryDomId] || "a category");
-            } else {
-                const num = parseFloat(val);
-                if (!rules.allowNegative && num < 0) invalidCategoriesFromClick.add(categoryNameById[categoryDomId] || "a category");
-                else if (num > rules.max) invalidCategoriesFromClick.add(categoryNameById[categoryDomId] || "a category");
-            }
-
-            inputsValues[stat] = parseFloat(val || 0);
+            inputsValues[stat] = parseFloat((valEl && valEl.value) ? valEl.value : 0);
         });
     });
-
-    if (invalidCategoriesFromClick.size > 0) {
-        invalidCategoriesFromClick.forEach((catName) => {
-            errors.push("Error: Invalid field in " + catName + ". See red error text.");
-        });
-    }
-
-    if (errors.length > 0) {
-        alert(errors.join("\n\n"));
-        return;
-    }
 
     const scores = calculateCategoryScores(pos, inputsValues);
 
