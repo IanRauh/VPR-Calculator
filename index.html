@@ -3,10 +3,27 @@
 <head>
 <meta charset="utf-8">
 <title>VPR Calculator</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
+
+/* ===== Brand colors ===== */
+:root{
+    --vpr-primary: #3e65b9;
+    --vpr-primary-hover: #3357a3;
+
+    /* keep these for compatibility, but they match primary */
+    --vpr-secondary: #3e65b9;
+    --vpr-secondary-hover: #3357a3;
+
+    --vpr-gold: #d4af37;
+    --vpr-gold-hover: #c79f2a;
+
+    /* D3 average (blue) */
+    --vpr-d3-blue: #2563eb;
+}
 
 body {
     font-family: Arial, sans-serif;
@@ -16,10 +33,12 @@ body {
     color: #111827;
 }
 
+/* ========= make usable area wider ========= */
 .pageContainer {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 0 0;
+    padding: 0 18px;
+    box-sizing: border-box;
 }
 
 /* ===== Landing + Header ===== */
@@ -34,26 +53,8 @@ body {
 }
 
 .main-title {
-    font-size: 100px;
+    font-size: 70px;
     margin: 0;
-}
-
-.landingSubTitle {
-    font-family: "Inter", Arial, sans-serif;
-    max-width: 1050px;
-    margin: 14px auto;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    color: #111827;
-    letter-spacing: 0.1px;
-    line-height: 1.55;
-    padding: 0 18px;
-    padding-bottom: 40px;
-}
-
-.landingSubTitle + .landingSubTitle {
-    margin-top: 28px;
 }
 
 .full-width-line {
@@ -64,15 +65,19 @@ body {
     left: 50%;
     margin-left: -50vw;
     margin-top: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 60px;
     background: #e5e7eb;
 }
 
 /* ===== Cards ===== */
 .category {
     background: #ffffff;
-    padding: 16px 20px 16px 20px;
-    margin-bottom: 16px;
+    padding: 16px 20px 0 20px;
+
+    width: 362px;
+    max-width: 100%;
+    margin: 0 auto 16px auto;
+
     border-radius: 12px;
     border: 1px solid #e5e7eb;
     box-shadow: 0 1px 2px rgba(0,0,0,0.06);
@@ -95,7 +100,7 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-input.invalid { border: 2px solid red; }
+input.invalid { border: 2px solid #dc2626; }
 input.valid { border: 1px solid #ccc; }
 
 select {
@@ -113,30 +118,69 @@ input[type="number"], select {
 }
 
 input[type="number"]:focus, select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+    border-color: var(--vpr-primary);
+    box-shadow: 0 0 0 3px rgba(62,101,185,0.18);
 }
 
-.scoreDisplay {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    color: #0f766e;
+/* ===== Weight footer strip: subtle configuration area ===== */
+.weightRow{
+    margin-top: 12px;
+
+    border-top: 1px solid #eef2f7;
+    background: #f9fafb;
+
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 10px 20px 12px 20px;
+
+    border-radius: 0 0 12px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 12px;
+    color: #6b7280;
+
+    overflow: hidden;
+}
+
+.weightRow span{
     font-weight: 800;
-    font-size: 16px;
+    margin-left: 0;
+
+    min-width: 40px;
+    text-align: right;
+    color: #111827;
 }
 
-.weightRow { margin-top: 10px; font-size: 13px; }
-.weightRow span { font-weight: bold; margin-left: 10px; }
+/* Make sliders feel “advanced” and visually quieter */
+.weightRow input[type="range"]{
+    flex: 1;
+    height: 4px;
+    accent-color: #ef640e;
+    opacity: 0.85;
+}
 
-.errorMessage { color: red; font-size: 13px; margin-top: 0; }
+.weightRow input[type="range"]:hover,
+.weightRow input[type="range"]:focus{
+    opacity: 1;
+}
 
+.errorMessage{
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 800;
+}
+
+/* Base button styling (calculator buttons, etc.) */
 button {
     display: block;
     width: 220px;
     margin: 24px auto;
     padding: 12px 14px;
-    background: #2563eb;
+    background: var(--vpr-primary);
     color: white;
     border: none;
     border-radius: 12px;
@@ -145,18 +189,24 @@ button {
 }
 
 button:hover {
-    background: #1d4ed8;
+    background: var(--vpr-primary-hover);
     cursor: pointer;
+}
+
+/* tighten spacing between Calculate and Clear */
+#calculateBtn{
+    margin: 18px auto 8px auto;   /* top, right, bottom, left */
 }
 
 /* clear button styling */
 #clearBtn{
-    width: 120px;
-    padding: 9px 12px;
-    font-size: 16px;
-    border-radius: 10px;
+    width: 90px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 8px;
     background: #6b7280;
-    margin-top: 12px;
+    margin-top: 1px;
+    margin: 0 auto 70px auto;     /* closer to Calculate, still space below */
 }
 
 #clearBtn:hover{
@@ -168,177 +218,223 @@ button:hover {
     font-size: 52px;
     font-weight: bold;
     color: #2b7a2b;
+    margin-top: 30px;
 }
 
 .hidden { display: none; }
 
-/* Bell curve styles */
-#bellWrapper {
-    margin-top: 18px;
-    margin-bottom: 10px;
+/* ===== Radar chart wrapper (replaces bell curve) ===== */
+#radarWrap{
+    position: relative;
     background: #ffffff;
-    padding: 20px;
+
+    padding: 12px 14px 16px 14px;
+
     border-radius: 12px;
     border: 1px solid #e5e7eb;
     box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-}
 
-#bellTopLabels, #bellBottomLabels {
-    display: flex;
-    justify-content: space-between;
+    max-width: 720px;
     width: 100%;
-    padding: 0 5px;
-}
-
-#bellTopLabels span {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    flex: 1;
-    text-decoration: underline;
-    color: #000000;
-}
-
-#bellBottomLabels {
-    justify-content: space-between;
-    margin-top: -18px;
-    padding-top: 0px;
-}
-
-#bellBottomLabels span {
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-    flex: 1;
-}
-
-#bellBottomLabels span:nth-child(1) { text-align: left; }
-#bellBottomLabels span:nth-child(2) { text-align: center; }
-#bellBottomLabels span:nth-child(3) { text-align: right; }
-
-#bellTopLabels span:nth-child(1) { text-align: left; }
-#bellTopLabels span:nth-child(2) { text-align: center; }
-#bellTopLabels span:nth-child(3) { text-align: right; }
-
-#bellWrapper svg {
-    display: block;
-    margin-bottom: 0px;
-}
-
-/* Score label */
-#bellScoreLabel{
-    font-family: "Inter", Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 900;
-    fill: #2b7a2b;
-    paint-order: stroke;
-    stroke: #ffffff;
-    stroke-width: 3px;
-    stroke-linejoin: round;
-}
-
-/* Fraction bar inside the SVG (separate element so it is always controllable) */
-#bellScoreBar{
-    stroke: #2b7a2b;
-    stroke-width: 2;
-    stroke-linecap: round;
-    paint-order: stroke;
-    stroke-linejoin: round;
-}
-
-/* Position selector row */
-.input-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.input-row label {
-    width: 150px;
-    text-align: right;
-    margin: 0;
-    line-height: 30px;
-}
-
-.input-row select {
-    position: relative;
-    top: 0px;
-    height: 30px;
-    font-size: 16px;
-    padding: 0 6px;
+    margin: 8px auto 10px auto;
+    margin-bottom: 6px;
     box-sizing: border-box;
 }
 
-/* Small Go buttons next to dropdowns */
-.goBtnSmall{
-    width: 70px;
+/* Title becomes an overlay (does not take layout space) */
+#radarTitleRow{
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     margin: 0;
-    padding: 6px 10px;
-    font-size: 16px;
-    border-radius: 10px;
+    pointer-events: none;
 }
 
-.bellLabel { text-align: center; }
-.percentileText { font-size: 6px; margin-bottom: 11px; }
-.descText { font-size: 13px; }
+#radarTitle{
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 950;
+    color: #111827;
+    letter-spacing: 0.2px;
 
-/* Clean row layout for inputs and errors */
-.fieldRow {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+/* responsive canvas */
+#radarCanvas{
+    width: 100%;
+    height: 460px;
+    display: block;
+}
+
+/* ===== Breakdown bars fallback (for 1-2 categories) ===== */
+#breakdownBars{
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    padding: 6px 4px 6px 4px;
+}
+
+/* ===== Fix: prevent title overlap in Bars mode ===== */
+#radarWrap.barsMode #breakdownBars{
+    padding-top: 44px;
+}
+@media (max-width: 520px){
+    #radarWrap.barsMode #breakdownBars{
+        padding-top: 50px;
+    }
+}
+
+.barRow{
     display: grid;
-    grid-template-columns: 190px 75px max-content;
-    column-gap: 14px;
+    grid-template-columns: 170px 1fr 56px;
+    gap: 12px;
     align-items: center;
-    margin-bottom: 10px;
 }
 
-.fieldRow label {
+.barLabel{
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: #111827;
+}
+
+.barTrack{
+    position: relative;
+    height: 12px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(17,24,39,0.04);
+}
+
+.barFill{
+    height: 100%;
+    width: 0%;
+    background: rgba(43,122,43,0.70);
+    border-radius: 999px;
+    transition: width 220ms ease;
+}
+
+.barD3Marker{
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 3px;
+    left: 50%;
+    background: var(--vpr-d3-blue);
+    border-radius: 2px;
+    opacity: 0.95;
+}
+
+.barScore{
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    color: #111827;
+    text-align: right;
+}
+
+/* D3 note in bottom-right of the chart card */
+#d3Note{
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--vpr-d3-blue);
+    opacity: 0.95;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* ===== Bars mode tweak for D3 note ===== */
+#radarWrap.barsMode #d3Note{
+    bottom: 4px;
+}
+
+@media (max-width: 520px){
+    #radarCanvas{
+        height: 380px;
+    }
+    .barRow{
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    .barScore{
+        text-align: left;
+    }
+}
+
+/* ===== Stat row: label + input as one unit; error as annotation under input ===== */
+.fieldRow{
+    display: grid;
+    /* fixed label column keeps inputs visually “attached” instead of drifting right */
+    grid-template-columns: 255px 96px;
+    grid-template-areas:
+        "label input"
+        ".     error";
+    column-gap: 10px;
+    row-gap: 2px;
+    align-items: center;
+
+    /* tighter spacing between stat rows */
+    margin-bottom: 8px;
+}
+
+.fieldRow label{
+    grid-area: label;
     width: auto;
     margin: 0;
 }
 
-.fieldRow input[type="number"] {
-    width: 65px;
+.fieldRow input[type="number"]{
+    grid-area: input;
+    width: 96px;
+    text-align: right;
+
+    justify-self: end;
 }
 
-.fieldRow .errorMessage {
-    grid-column: 3 / 4;
-    margin: 0;
+/* Error becomes a small “tag” attached under the input (not a full new row of content) */
+.fieldRow .errorMessage{
+    grid-area: error;
+
+    justify-self: end;
+    text-align: right;
+
+    margin: 2px 0 0 0;
+    line-height: 1.15;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(220,38,38,0.10);
+    color: #dc2626;
+
     white-space: nowrap;
-    line-height: 1.2;
-    padding-left: 4px;
 }
 
-/* Landing dropdown block */
-.landingSelectWrap {
-    background: #ffffff;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-    margin: 60px auto 0px auto;
-    width: fit-content;
-    max-width: 100%;
+.fieldRow .errorMessage:empty{
+    display: none;
 }
 
-.landingSelectWrap .input-row {
-    align-items: center;
+@media (max-width: 520px){
+    .fieldRow{
+        grid-template-columns: 1fr 92px;
+    }
 }
 
-.landingSelectWrap .input-row label {
-    width: auto;
-    text-align: left;
-    line-height: normal;
-}
-
-.landingSelectWrap .input-row select {
-    height: 30px;
-    padding: 2px 8px;
-    margin-bottom: 0;
-    line-height: normal;
-}
-
-/* Landing credit blurb */
+/* ===== Landing credit blurb (NOW GLOBAL) ===== */
 .landingCredit {
     position: fixed;
     right: 10px;
@@ -348,60 +444,97 @@ button:hover {
     font-family: "Inter", Arial, sans-serif;
     font-weight: 600;
     user-select: none;
+    z-index: 9997;
+    pointer-events: none;
 }
 
 /* ===== Access Code block (landing) ===== */
 .accessWrap {
     background: #ffffff;
-    padding: 12px 16px;
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-    margin: 0 auto 10px auto;
-    width: fit-content;
-    max-width: 100%;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+
+    width: 600px;
+    max-width: calc(100% - 36px);
+    margin: 0 auto 18px auto;
+
+    padding: 18px 18px;
+    box-sizing: border-box;
 }
 
 .accessRow {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 16px;
     align-items: center;
-    gap: 10px;
+}
+
+/* IMPORTANT: colon spacing matches grid gap */
+.accessRow label::after {
+    content: ":";
+    margin-right: 16px;
 }
 
 .accessRow label {
-    width: auto;
-    text-align: left;
-    margin: 0;
     font-family: "Inter", Arial, sans-serif;
-    font-weight: 700;
-    font-size: 14px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    white-space: nowrap;
+    margin: 0;
 }
 
 #accessCode {
-    width: 176px;
-    height: 30px;
-    font-size: 16px;
-    padding: 0 8px;
+    width: 200px;
+    height: 40px;
+    font-size: 22px;
+    padding: 0 6px;
     box-sizing: border-box;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
+    border-radius: 12px;
     outline: none;
 }
 
 #accessCode:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+    border-color: var(--vpr-primary);
+    box-shadow: 0 0 0 3px rgba(62,101,185,0.18);
 }
 
 #accessBtn {
-    width: 70px;
+    width: 110px;
+    height: 46px;
     margin: 0;
-    padding: 6px 10px;
-    font-size: 16px;
-    border-radius: 10px;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 12px;
 }
 
-/* Access granted "toast" inside the same block area */
+/* optional: make the error align nicely under the input */
+#accessError {
+    margin-top: 10px;
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 700;
+}
+
+@media (max-width: 560px){
+    .accessRow{
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .accessRow label{
+        text-align: left;
+        font-size: 20px;
+    }
+    .accessRow label::after{
+        margin-right: 0;
+    }
+    #accessBtn{
+        width: 100%;
+    }
+}
+
 #accessGranted {
     color: #2b7a2b;
     font-size: 14px;
@@ -411,7 +544,6 @@ button:hover {
     padding: 6px 0;
 }
 
-/* Disabled landing select look */
 select:disabled,
 button:disabled{
     background: #e5e7eb;
@@ -419,121 +551,7 @@ button:disabled{
     cursor: not-allowed;
 }
 
-.landingBlurbGrid{
-    max-width: 1000px;
-    margin: 20px auto 24px auto;
-    padding: 0 18px;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 30px;
-}
-
-.landingBlurbCard{
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-    padding: 14px 16px;
-    font-family: "Inter", Arial, sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #111827;
-    line-height: 1.55;
-    text-align: left;
-}
-
-/* First landing blurb spans full width (both columns) */
-.landingBlurbGrid .landingBlurbCard:first-child{
-    grid-column: 1 / -1;
-}
-
-.landingBlurbCard{
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.landingBlurbHeader{
-    font-size: 16px;
-    font-weight: 800;
-    margin: 0 0 8px 0;
-    line-height: 1.25;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 2px;
-}
-
-.landingBlurbBody{
-    font-size: 15px;
-    font-weight: 600;
-    margin: 0;
-    line-height: 1.55;
-}
-
-@media (max-width: 640px){
-    .landingBlurbGrid{ grid-template-columns: 1fr; }
-}
-
-/* ===== NEW: smaller landing note card (3/4 width) ===== */
-.landingNoteWrap{
-    max-width: 1000px;
-    padding: 0 18px;
-    margin: 0 auto 70px auto;
-    display: flex;
-    justify-content: center;
-}
-
-.landingNoteCard{
-    width: 75%;
-    max-width: 750px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-    padding: 14px 16px;
-    font-family: "Inter", Arial, sans-serif;
-    color: #111827;
-    line-height: 1.55;
-}
-
-.landingNoteCard .landingBlurbHeader{
-    margin-bottom: 8px;
-}
-
-.landingNoteCard .landingBlurbBody{
-    font-size: 15px;
-    font-weight: 600;
-}
-
-@media (max-width: 640px){
-    .landingNoteCard{
-        width: 100%;
-        max-width: none;
-    }
-}
-
-/* ===== Model header on calculator page ===== */
-#modelHeaderWrap{
-    margin: 8px 0 18px 0;
-    text-align: center;
-}
-#modelHeaderText{
-    font-family: "Inter", Arial, sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    margin: 8px 0 10px 0;
-    color: #111827;
-}
-#modelHeaderLine{
-    border: none;
-    height: 2px;
-    width: 100%;
-    background: #e5e7eb;
-    margin: 0;
-}
-
-/* ===== Tooltip styles for stat labels ===== */
+/* ===== Tooltip styles (more subtle, still "?") ===== */
 .statTip{
     position: relative;
     user-select: none;
@@ -543,22 +561,29 @@ button:disabled{
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 14px;
+    height: 14px;
+    margin-left: 3px;
+    border-radius: 999px;
 
-    width: 16px;
-    height: 16px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
 
-    margin-left: 6px;
-
-    border-radius: 4px;
-    background: #e5e7eb;
-    color: #111827;
-
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     line-height: 1;
     vertical-align: middle;
-
     outline: none;
+
+    position: relative;
+    top: -1px;
+}
+
+.tipIcon:hover{
+    border-color: #cbd5e1;
+    color: #374151;
+    background: #f8fafc;
 }
 
 .tipBox{
@@ -567,37 +592,34 @@ button:disabled{
     top: 100%;
     transform: translateY(6px);
     z-index: 50;
-
     min-width: 220px;
     max-width: 280px;
-
     background: #111827;
     color: #ffffff;
-
     padding: 8px 10px;
     border-radius: 8px;
-
     font-size: 11px;
     line-height: 1.3;
-
     box-shadow: 0 10px 18px rgba(0,0,0,0.18);
-
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     white-space: normal;
+
+    position: absolute;
+    z-index: 999;
 }
 
 .tipBox strong{
     font-weight: 800;
 }
 
-.tipIcon:hover + .tipBox{
+.tipIcon:hover + .tipBox,
+.tipIcon:focus + .tipBox{
     opacity: 1;
     visibility: visible;
 }
 
-/* If a tooltip would run off the page on small screens, nudge it left */
 @media (max-width: 640px){
     .tipBox{
         left: -20px;
@@ -605,110 +627,625 @@ button:disabled{
     }
 }
 
+/* slightly crisper card */
+.landingMenuWrap{
+    border-color: #dbe3f2;
+    box-shadow: 0 12px 30px rgba(17, 24, 39, 0.10);
+}
+
+/* slightly tighter buttons */
+.menuItemBtn{
+    padding: 11px 16px;
+    border-radius: 10px;
+}
+
+/* make the gold border feel more premium */
+#menuSelectPosBtn,
+#landingSelectPosBtn{
+    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12), 0 0 0 3px rgba(212, 175, 55, 0.12);
+}
+
+#menuSelectPosBtn:hover,
+#landingSelectPosBtn:hover{
+    transform: translateY(-1px);
+}
+
+/* ===== Error popup modal ===== */
+#errorModalOverlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    z-index: 9999;
+}
+
+#errorModalOverlay.isOpen{
+    display: flex;
+}
+
+#errorModalCard{
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+    padding: 16px 16px 14px 16px;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+#errorModalTitle{
+    font-size: 16px;
+    font-weight: 900;
+    margin: 0 0 8px 0;
+    color: #111827;
+}
+
+#errorModalBody{
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #111827;
+    line-height: 1.45;
+}
+
+#errorModalBtnRow{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#errorModalOk{
+    width: 90px;
+    margin: 0;
+    padding: 8px 10px;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+/* ===== Shared hamburger menu ===== */
+#menuBtn{
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    width: 60px;
+    height: 60px;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.06);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+}
+
+#menuBtn:hover{
+    background: #f3f4f6;
+}
+
+.menuIcon{
+    width: 28px;
+    height: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menuIcon span{
+    display: block;
+    height: 4px;
+    border-radius: 2px;
+    background: #111827;
+}
+
+/* dropdown (hamburger) */
+#menuDropdown{
+    position: fixed;
+    left: 10px;
+    top: 58px;
+    width: 290px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+    padding: 10px;
+    z-index: 9998;
+    display: none;
+}
+
+#menuDropdown.isOpen{
+    display: block;
+}
+
+/* main menu buttons thinner + smaller text */
+.menuItemBtn{
+    width: 100%;
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 18px;
+    border-radius: 12px;
+}
+
+/* ===== MENU COLORS (ALL BLUE) ===== */
+#menuDropdown .menuItemBtn,
+#landingMainMenuWrap .menuItemBtn{
+    background: var(--vpr-primary);
+    color: #ffffff;
+    border: 1px solid transparent;
+}
+
+#menuDropdown .menuItemBtn:hover,
+#landingMainMenuWrap .menuItemBtn:hover{
+    background: var(--vpr-primary-hover);
+}
+
+.menuItemBtn + .menuItemBtn{
+    margin-top: 8px;
+}
+
+/* Select Position: same blue fill, premium gold border */
+#menuSelectPosBtn,
+#landingSelectPosBtn{
+    background: var(--vpr-primary) !important;
+    color: #ffffff !important;
+    border: 2px solid var(--vpr-gold) !important;
+    box-shadow: 0 6px 16px rgba(212,175,55,0.16);
+}
+
+#menuSelectPosBtn:hover,
+#landingSelectPosBtn:hover{
+    background: var(--vpr-primary-hover) !important;
+    border-color: var(--vpr-gold-hover) !important;
+    box-shadow: 0 8px 18px rgba(212,175,55,0.22);
+}
+
+/* ===== Flyout submenu (hamburger only) ===== */
+#posSubmenu{
+    position: fixed;
+    width: 290px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+    padding: 10px;
+    z-index: 9999;
+    display: none;
+}
+
+#posSubmenu.isOpen{
+    display: flex;
+    flex-direction: column;
+}
+
+/* folder (group) buttons */
+.posGroupBtn{
+    width: 88%;
+    margin: 0 auto;
+    padding: 7px 9px;
+    font-size: 13px;
+    border-radius: 12px;
+    background: #c7d2fe;
+    color: #0f172a;
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.posGroupBtn:hover{
+    background: #a5b4fc;
+}
+
+.posGroupBtn + .posGroupBtn{
+    margin-top: 16px;
+}
+
+/* group panels */
+.posGroupPanel{
+    width: 100%;
+    display: none;
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.posGroupPanel.isOpen{
+    display: block;
+}
+
+/* submenu item buttons */
+.posItemBtn{
+    width: 84%;
+    margin: 0 0 0 auto;
+    padding: 6px 9px;
+    font-size: 13px;
+    border-radius: 12px;
+    background: #dbeafe;
+    color: #0f172a;
+    text-align: center;
+}
+
+.posItemBtn:hover{
+    background: #bfdbfe;
+}
+
+.posItemBtn + .posItemBtn{
+    margin-top: 6px;
+}
+
+/* Full width page break line on non-landing pages */
+.calcFullWidthLine{
+    border: none;
+    height: 2px;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+    margin-top: 10px;
+    margin-bottom: 18px;
+    background: #e5e7eb;
+}
+
+/* ===== Content pages ===== */
+.contentPageWrap{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 18px;
+}
+
+.contentHeader{
+    text-align: center;
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 48px;
+    font-weight: 970;
+    margin: 18px 0 10px 0;
+}
+
+.contentCard{
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    font-family: "Inter", Arial, sans-serif;
+    color: #111827;
+    line-height: 1.55;
+}
+
+.contentCard h3{
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 900;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.contentCard p{
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.contentCard ul{
+    margin: 0;
+    padding-left: 18px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ===== Help page: narrower card ===== */
+.helpNarrow{
+    max-width: 430px;
+    margin: 0 auto;
+}
+
+/* ===== calculator page positional header ===== */
+.posHeader{
+    text-align: center;
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    margin: 18px 0 8px 0;
+}
+
+.landingMenuWrap{
+    width: 480px;
+    max-width: calc(100% - 36px);
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+    padding: 20px 18px 18px 18px;
+    box-sizing: border-box;
+}
+
+.landingMenuTitle{
+    font-size: 20px;
+    margin: 0 0 14px 0;
+    text-align: center;
+    font-weight: 900;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+.landingMenuDivider{
+    border: none;
+    height: 3px;
+    width: 100%;
+    background: #e5e7eb;
+    margin: 10px 0 14px 0;
+}
+
+/* landing submenu */
+#landingPosSubmenu{
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+    display: none;
+    flex-direction: column;
+}
+
+#landingPosSubmenu.isOpen{
+    display: flex;
+}
+
+/* Landing favicon (top-left, landing only because it lives inside #landingPage) */
+.landingFavicon {
+    position: fixed;
+    left: 16px;
+    top: 10px;
+    width: 106px;
+    height: 106px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9996;
+}
+
+.landingFavicon img {
+    width: 144px;
+    height: 144px;
+    display: block;
+}
+
+/* ===== About page layout tweaks (ONLY About VPR) ===== */
+#aboutPage .contentPageWrap{
+    max-width: 1150px;
+    padding: 0 22px;
+}
+
+#aboutPage .aboutGrid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(410px, 1fr));
+    column-gap: 44px;
+    row-gap: 18px;
+    align-items: stretch;
+    justify-content: center;
+    margin-top: 70px;
+}
+
+#aboutPage .aboutBottom{
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+#aboutPage .aboutBottom .contentCard{
+    width: 60%;
+    max-width: 820px;
+}
+
+#aboutPage .contentCard{
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+#aboutPage .contentCard h3{
+    text-decoration: none;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+#aboutPage .contentCard p{
+    font-weight: 360;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+@media (max-width: 980px){
+    #aboutPage .aboutGrid{
+        grid-template-columns: 1fr;
+        row-gap: 14px;
+    }
+    #aboutPage .aboutBottom .contentCard{
+        width: 100%;
+    }
+}
+
+/* ===== Match About styling on other info pages ===== */
+#instructionsPage .contentPageWrap,
+#appsPage .contentPageWrap,
+#helpPage .contentPageWrap{
+    max-width: 850px;
+    padding: 0 22px;
+}
+
+#instructionsPage .contentCard,
+#appsPage .contentCard,
+#helpPage .contentCard{
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+#appsPage .contentCard:last-of-type{
+    margin-top: 46px;
+}
+
+#instructionsPage .contentCard h3,
+#appsPage .contentCard h3,
+#helpPage .contentCard h3{
+    text-decoration: none;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+#instructionsPage .contentCard p,
+#appsPage .contentCard p,
+#helpPage .contentCard p{
+    font-weight: 360;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
 </style>
 </head>
 <body>
 
+<!-- Shared hamburger menu (hidden on landing) -->
+<button id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">
+    <div class="menuIcon" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</button>
+
+<div id="menuDropdown" aria-label="Menu">
+    <button id="menuHomeBtn" type="button" class="menuItemBtn">About VPR</button>
+    <button id="menuInstructionsBtn" type="button" class="menuItemBtn">How To Use The Calculator</button>
+    <button id="menuAppsBtn" type="button" class="menuItemBtn">Recommended Applications</button>
+
+    <button id="menuSelectPosBtn" type="button" class="menuItemBtn">Select Position</button>
+
+    <button id="menuHelpBtn" type="button" class="menuItemBtn">Help</button>
+</div>
+
+<!-- Flyout submenu for hamburger Select Position -->
+<div id="posSubmenu" aria-label="Select Position Submenu">
+    <button class="posGroupBtn" type="button" data-group="outside">Outside Hitter</button>
+    <div class="posGroupPanel" data-panel="outside">
+        <button class="posItemBtn" type="button" data-pos="outside1">Outside Hitter 1</button>
+        <button class="posItemBtn" type="button" data-pos="outside2">Outside Hitter 2</button>
+    </div>
+
+    <button class="posGroupBtn" type="button" data-group="middle">Middle Blocker</button>
+    <div class="posGroupPanel" data-panel="middle">
+        <button class="posItemBtn" type="button" data-pos="middle1">Middle Blocker 1</button>
+        <button class="posItemBtn" type="button" data-pos="middle2">Middle Blocker 2</button>
+    </div>
+
+    <button class="posGroupBtn" type="button" data-group="opposite">Opposite</button>
+    <div class="posGroupPanel" data-panel="opposite">
+        <button class="posItemBtn" type="button" data-pos="opposite">Opposite (6 Rotation)</button>
+    </div>
+
+    <button class="posGroupBtn" type="button" data-group="setter">Setter</button>
+    <div class="posGroupPanel" data-panel="setter">
+        <button class="posItemBtn" type="button" data-pos="setter">Setter (5-1)</button>
+    </div>
+
+    <button class="posGroupBtn" type="button" data-group="libero">Libero</button>
+    <div class="posGroupPanel" data-panel="libero">
+        <button class="posItemBtn" type="button" data-pos="libero">Libero</button>
+    </div>
+</div>
+
 <!-- ===================== LANDING PAGE ===================== -->
 <div id="landingPage">
+    <div class="landingFavicon" id="landingFavicon" aria-hidden="true">
+        <img src="favicon.ico" alt="">
+    </div>
+
     <div class="header">
-        <h1 class="main-title">VPR Calculator</h1>
+        <h1 class="main-title">Volleyball Performance Rating Calculator</h1>
         <hr class="full-width-line">
 
-        <!-- Access Code area -->
         <div class="accessWrap" id="accessWrap">
             <div class="accessRow" id="accessRow">
-                <label for="accessCode">Enter Access Code:</label>
+                <label for="accessCode">Enter Access Code</label>
                 <input id="accessCode" type="password" autocomplete="off" />
-                <button id="accessBtn" type="button" class="goBtnSmall">Go</button>
+                <button id="accessBtn" type="button">Go</button>
             </div>
             <div class="errorMessage" id="accessError"></div>
             <div id="accessGranted" class="hidden">Access Granted</div>
         </div>
 
-        <!-- Landing position selector requires Go (unchanged) -->
-        <div class="landingSelectWrap">
-            <div class="input-row">
-                <label for="landingPosition">Select Position:</label>
-                <select id="landingPosition">
-                    <option value="" selected disabled>- Select -</option>
-                    <option value="middle1">Middle Blocker 1</option>
-                    <option value="middle2">Middle Blocker 2</option>
-                    <option value="outside1">Outside Hitter 1</option>
-                    <option value="outside2">Outside Hitter 2</option>
-                    <option value="opposite">Opposite (6 Rotation)</option>
-                    <option value="setter">Setter (5-1)</option>
-                    <option value="libero">Libero</option>
-                </select>
-                <button id="landingGoBtn" type="button" class="goBtnSmall">Go</button>
-            </div>
-        </div>
+        <div id="landingMainMenuWrap" class="landingMenuWrap hidden" aria-label="Landing Main Menu">
+            <div class="landingMenuTitle">Menu</div>
+            <hr class="landingMenuDivider">
 
-        <div class="landingBlurbGrid">
-            <div class="landingBlurbCard">
-                <div class="landingBlurbHeader">What VPR Is and How It Works:</div>
-                <div class="landingBlurbBody">
-                    VPR (Volleyball Performance Rating), inspired by ESPN's Quarterback Rating (QBR), condenses multiple performance statistics into a single standardized score from 0 to 1000 that quantifies a player’s overall on-court impact. Each statistic is evaluated relative to historical Division III Men’s positional averages. The model is trained on multi-season data from every Division III Men’s volleyball program, allowing each input to be judged against the standard for that position.
+            <button id="landingHomeBtn" type="button" class="menuItemBtn">About VPR</button>
+            <button id="landingInstructionsBtn" type="button" class="menuItemBtn">How To Use The Calculator</button>
+            <button id="landingAppsBtn" type="button" class="menuItemBtn">Recommended Applications</button>
+
+            <button id="landingSelectPosBtn" type="button" class="menuItemBtn">Select Position</button>
+
+            <div id="landingPosSubmenu" aria-label="Landing Select Position Submenu">
+                <button class="posGroupBtn" type="button" data-group="outside">Outside Hitter</button>
+                <div class="posGroupPanel" data-panel="outside">
+                    <button class="posItemBtn" type="button" data-pos="outside1">Outside Hitter 1</button>
+                    <button class="posItemBtn" type="button" data-pos="outside2">Outside Hitter 2</button>
                 </div>
-            </div>
 
-            <div class="landingBlurbCard">
-                <div class="landingBlurbHeader">Entering Data and Generating a VPR:</div>
-                <div class="landingBlurbBody">
-                    Select a position model and input a player’s statistics to generate a VPR based on expected performance for that role. <br><br> Statistic timeframes can range from a single set to a full season or career, but all inputs must come from the same timeframe. Larger timeframe samples will produce more stable results compared to those of a shorter timeframe. <br><br> Most inputs are entered as “per set” values; however, certain statistics, such as serving, are entered in the form of "per attempt". For example, total aces should be divided by total serve attempts to calculate your “aces per attempt” figure before inputting.
+                <button class="posGroupBtn" type="button" data-group="middle">Middle Blocker</button>
+                <div class="posGroupPanel" data-panel="middle">
+                    <button class="posItemBtn" type="button" data-pos="middle1">Middle Blocker 1</button>
+                    <button class="posItemBtn" type="button" data-pos="middle2">Middle Blocker 2</button>
                 </div>
-            </div>
 
-            <div class="landingBlurbCard">
-                <div class="landingBlurbHeader">Weights, Comparisons, and Best Use:</div>
-                <div class="landingBlurbBody">
-                    Recommended weights are preset to reflect typical positional responsibilities, however users may adjust them via weight sliders to match system emphasis or coaching philosophy. Weight for any performance category can be set to 0 to ignore statistics from that category, however the sum of all the weights must always equal 100%. When comparing players, they should be evaluated using the same positional model and weighting structure to ensure fairness in evaluation. <br><br> VPR is best used as a comparative tool to support overall player evaluation, lineup decisions, and to measure player development over time. Clean, consistent data produces the most reliable results.
+                <button class="posGroupBtn" type="button" data-group="opposite">Opposite</button>
+                <div class="posGroupPanel" data-panel="opposite">
+                    <button class="posItemBtn" type="button" data-pos="opposite">Opposite (6 Rotation)</button>
                 </div>
-            </div>
-        </div>
 
-        <!-- ===== NEW smaller box (3/4 width) below the other landing boxes ===== -->
-        <div class="landingNoteWrap">
-            <div class="landingNoteCard">
-                <div class="landingBlurbHeader">Model Status (2.3.1):</div>
-                <div class="landingBlurbBody">
-                    This version of VPR uses a streamlined model designed to prioritize clarity, usability, and meaningful feedback. The full VPR model, which incorporates additional metrics and refinements, is currently in development.
+                <button class="posGroupBtn" type="button" data-group="setter">Setter</button>
+                <div class="posGroupPanel" data-panel="setter">
+                    <button class="posItemBtn" type="button" data-pos="setter">Setter (5-1)</button>
+                </div>
+
+                <button class="posGroupBtn" type="button" data-group="libero">Libero</button>
+                <div class="posGroupPanel" data-panel="libero">
+                    <button class="posItemBtn" type="button" data-pos="libero">Libero</button>
                 </div>
             </div>
         </div>
-
     </div>
-
-    <div class="landingCredit">VPR Software (2.3.1) by Ian Rauh</div>
 </div>
 
 <!-- ===================== CALCULATOR PAGE ===================== -->
 <div id="calculatorPage" class="hidden">
     <div class="pageContainer">
+        <select id="position" class="hidden" aria-hidden="true" tabindex="-1">
+            <option value="middle1">Middle Blocker 1</option>
+            <option value="middle2">Middle Blocker 2</option>
+            <option value="outside1">Outside Hitter 1</option>
+            <option value="outside2">Outside Hitter 2</option>
+            <option value="opposite">Opposite (6 Rotation)</option>
+            <option value="setter">Setter (5-1)</option>
+            <option value="libero">Libero</option>
+        </select>
 
-        <div class="input-row">
-            <label for="position">Select Position:</label>
-
-            <!-- CHANGED: no Go button needed, navigation happens on change -->
-            <select id="position">
-                <option value="landing">- Home -</option>
-                <option value="middle1">Middle Blocker 1</option>
-                <option value="middle2">Middle Blocker 2</option>
-                <option value="outside1">Outside Hitter 1</option>
-                <option value="outside2">Outside Hitter 2</option>
-                <option value="opposite">Opposite (6 Rotation)</option>
-                <option value="setter">Setter (5-1)</option>
-                <option value="libero">Libero</option>
-            </select>
-
-            <!-- removed positionGoBtn -->
-        </div>
-
-        <!-- Model header + page break line -->
-        <div id="modelHeaderWrap" class="hidden">
-            <div id="modelHeaderText"></div>
-            <hr id="modelHeaderLine">
-        </div>
+        <div id="posHeader" class="posHeader"></div>
+        <hr class="calcFullWidthLine">
 
         <div id="attacking" class="category">
             <h2>Attacking Performance</h2>
@@ -723,7 +1260,7 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> 0 - 15
                     </span>
                 </label>
-                <input type="number" id="kills" min="0" step="0.01" placeholder="1.11">
+                <input type="number" id="kills" min="0" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_kills"></div>
             </div>
 
@@ -733,11 +1270,11 @@ button:disabled{
                     <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
                         <strong>What it is:</strong> Efficiency of your swings.<br><br>
-                        <strong>How to calculate:</strong> (Kills − Errors) / Total Attempts.<br><br>
+                        <strong>How to calculate:</strong> (Kills - Errors) / Total Attempts.<br><br>
                         <strong>Acceptable Value Range:</strong> -1.000 - 1.000
                     </span>
                 </label>
-                <input type="number" id="hitPct" min="-1" max="1" step="0.001" placeholder="0.333">
+                <input type="number" id="hitPct" min="-1" max="1" step="0.001" placeholder="0.000">
                 <div class="errorMessage" id="err_hitPct"></div>
             </div>
 
@@ -751,11 +1288,10 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> -1.000 - 1.000
                     </span>
                 </label>
-                <input type="number" id="killPct" min="-1" max="1" step="0.001" placeholder="0.444">
+                <input type="number" id="killPct" min="-1" max="1" step="0.001" placeholder="0.000">
                 <div class="errorMessage" id="err_killPct"></div>
             </div>
 
-            <div class="scoreDisplay" id="attackingScore">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_attacking" tabindex="-1">
                 <span id="l_attacking">0%</span>
@@ -775,11 +1311,10 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> 0.00 - 10.00
                     </span>
                 </label>
-                <input type="number" id="blocks" min="0" step="0.01" placeholder="0.33">
+                <input type="number" id="blocks" min="0" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_blocks"></div>
             </div>
 
-            <div class="scoreDisplay" id="blockingScore">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_blocking" tabindex="-1">
                 <span id="l_blocking">0%</span>
@@ -799,7 +1334,7 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> 0.00 - 10.00
                     </span>
                 </label>
-                <input type="number" id="soloBlocks" min="0" step="0.01" placeholder="0.11">
+                <input type="number" id="soloBlocks" min="0" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_soloBlocks"></div>
             </div>
 
@@ -813,11 +1348,10 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> 0.00 - 10.00
                     </span>
                 </label>
-                <input type="number" id="assistBlocks" min="0" step="0.01" placeholder="0.33">
+                <input type="number" id="assistBlocks" min="0" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_assistBlocks"></div>
             </div>
 
-            <div class="scoreDisplay" id="blockingScoreMiddle">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_blockingMiddle" tabindex="-1">
                 <span id="l_blockingMiddle">0%</span>
@@ -832,12 +1366,12 @@ button:disabled{
                     Aces/Attempt
                     <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
-                        <strong>What it is:</strong> The ratio of aces to total serve attempts.<br><br>
                         <strong>How to calculate:</strong> Total aces / total serve attempts.<br><br>
+                        <strong>Recommendation:</strong> If you don't have total # of attempts, a fair assumption for a player is 2.92 attempts per set.<br><br>
                         <strong>Acceptable Value Range:</strong> 0.00 - 1.00
                     </span>
                 </label>
-                <input type="number" id="aces" min="0" max="1" step="0.01" placeholder="0.11">
+                <input type="number" id="aces" min="0" max="1" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_aces"></div>
             </div>
 
@@ -846,16 +1380,15 @@ button:disabled{
                     Errors/Attempt
                     <span class="tipIcon" tabindex="-1" aria-hidden="true">?</span>
                     <span class="tipBox">
-                        <strong>What it is:</strong> The ratio of service errors to total serve attempts.<br><br>
                         <strong>How to calculate:</strong> Total service errors / total service attempts.<br><br>
+                        <strong>Recommendation:</strong> If you don't have total # of attempts, a fair assumption for a player is 2.92 attempts per set.<br><br>
                         <strong>Acceptable Value Range:</strong> 0.00 - 1.00
                     </span>
                 </label>
-                <input type="number" id="serveErrors" min="0" max="1" step="0.01" placeholder="0.22">
+                <input type="number" id="serveErrors" min="0" max="1" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_serveErrors"></div>
             </div>
 
-            <div class="scoreDisplay" id="servingScore">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_serving" tabindex="-1">
                 <span id="l_serving">0%</span>
@@ -875,11 +1408,10 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> 0.00 - 10.00
                     </span>
                 </label>
-                <input type="number" id="digs" min="0" step="0.01" placeholder="1.11">
+                <input type="number" id="digs" min="0" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_digs"></div>
             </div>
 
-            <div class="scoreDisplay" id="defenseScore">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_defense" tabindex="-1">
                 <span id="l_defense">0%</span>
@@ -899,15 +1431,14 @@ button:disabled{
                         2 - Good: Slightly off-target but still in system.<br>
                         1 - Out-of-System: only high-ball options.<br>
                         0 - Error: Ace or unplayable pass.<br><br>
-                        <strong>How to calculate:</strong> Using the 0-3 pass rating scale. Sum of all pass ratings / total receptions.<br><br>
+                        <strong>How to calculate:</strong> Sum of all pass ratings / total receptions.<br><br>
                         <strong>Acceptable Value Range:</strong> 0.00 - 3.00
                     </span>
                 </label>
-                <input type="number" id="reception" min="0" max="3" step="0.01" placeholder="2.22">
+                <input type="number" id="reception" min="0" max="3" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_reception"></div>
             </div>
 
-            <div class="scoreDisplay" id="receiveScore">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_receive" tabindex="-1">
                 <span id="l_receive">0%</span>
@@ -927,11 +1458,10 @@ button:disabled{
                         <strong>Acceptable Value Range:</strong> 0.00 - 20.00
                     </span>
                 </label>
-                <input type="number" id="assists" min="0" step="0.01" placeholder="9.99">
+                <input type="number" id="assists" min="0" step="0.01" placeholder="0.00">
                 <div class="errorMessage" id="err_assists"></div>
             </div>
 
-            <div class="scoreDisplay" id="settingScore">0</div>
             <div class="weightRow">
                 Weight <input type="range" min="0" max="100" value="0" id="w_setting" tabindex="-1">
                 <span id="l_setting">0%</span>
@@ -939,55 +1469,150 @@ button:disabled{
         </div>
 
         <button id="calculateBtn">Calculate VPR</button>
+
+        <!-- MOVED: Clear button now sits directly under Calculate, before output -->
+        <button id="clearBtn" type="button">- Clear -</button>
+
         <div id="globalError" class="errorMessage" style="text-align:center; font-weight:800;"></div>
         <div id="vprResult"></div>
 
-        <div id="bellWrapper" class="hidden">
-            <div id="bellTopLabels">
-                <span>Below Average</span>
-                <span>Average</span>
-                <span>Elite</span>
+        <!-- ===== Breakdown visualization (Radar for 3+, Bars for 1-2) ===== -->
+        <div id="radarWrap" class="hidden" aria-label="VPR Breakdown Visualization">
+            <div id="radarTitleRow">
+                <div id="radarTitle">VPR Breakdown</div>
             </div>
 
-            <svg width="100%" height="190" viewBox="0 0 700 190">
-                <path id="bellOutline" fill="none" stroke="#999" stroke-width="2"/>
-                <path id="bellFill" fill="#2b7a2b" opacity="0.35"/>
-                <line id="bellMarker" y1="25" y2="185" stroke="#2b7a2b" stroke-width="2"/>
+            <div id="breakdownBars" aria-label="Breakdown Bars"></div>
+            <canvas id="radarCanvas"></canvas>
 
-                <!-- Fraction label -->
-                <text id="bellScoreLabel" x="0" y="14">
-                    <tspan id="bellScoreTop" x="0" y="14">0</tspan>
-                    <tspan id="bellScoreBottom" x="0" dy="12">1000</tspan>
-                </text>
+            <div id="d3Note">D3 Historical Average in Blue (500)</div>
+        </div>
+    </div>
+</div>
 
-                <!-- Fraction bar -->
-                <line id="bellScoreBar" x1="0" y1="0" x2="0" y2="0"></line>
-            </svg>
+<!-- ===================== ABOUT VPR PAGE ===================== -->
+<div id="aboutPage" class="hidden">
+    <div class="contentPageWrap">
+        <div class="contentHeader">About VPR</div>
+        <hr class="calcFullWidthLine">
 
-            <div id="bellBottomLabels">
-                <span>0th percentile</span>
-                <span>50th percentile</span>
-                <span>100th percentile</span>
+        <div class="aboutGrid">
+            <div class="contentCard">
+                <h3>What Is VPR?</h3>
+                <p>
+                    VPR (Volleyball Performance Rating) is a score from 0 to 1000 that summarizes a player’s on-court impact. It combines multiple statistics into a single number designed to <strong>quantify</strong> how “well” a player performed.
+                </p>
+            </div>
+
+            <div class="contentCard">
+                <h3>How The Model Is Trained</h3>
+                <p>
+                    VPR is a <strong>highly intelligent</strong> model, trained on historical data from every Division III Men’s volleyball program. The data is position-specific, allowing performance to be interpreted relative to historical Division III positional averages. This methodology ensures evaluation is data-driven and grounded in role-specific expectations, which is central to the model’s credibility.
+                </p>
+            </div>
+
+            <div class="contentCard">
+                <h3>Why It Matters</h3>
+                <p>
+                    VPR provides a solely data-driven evaluation of player performance, aiming to help coaches move beyond recency bias, reputation, eye test variability, and “eyeballed” statistical evaluations. The goal is not to replace coaching judgment, but to <strong>support it</strong> and provide a <strong>competitive advantage</strong> to the user.
+                </p>
             </div>
         </div>
+    </div>
+</div>
 
-        <button id="clearBtn" type="button">- Clear -</button>
+<!-- ===================== INSTRUCTIONS PAGE ===================== -->
+<div id="instructionsPage" class="hidden">
+    <div class="contentPageWrap">
+        <div class="contentHeader">How To Use The Calculator</div>
+        <hr class="calcFullWidthLine">
 
+        <div class="contentCard">
+            <h3>1.) Select A Position</h3>
+            <p>
+                Choose the appropriate positional model before entering data. Each model is built specifically for the statistical expectations of that position.
+            </p>
+        </div>
+
+        <div class="contentCard">
+            <h3>2.) Enter Statistics</h3>
+            <p>All statistics must come from the <strong>same timeframe</strong>, such as a single set, match, season, or career. Larger sample sizes produce more stable results as data will normalize over longer periods of time.<br><br>Most statistics are entered as per set values. However, certain statistics, such as serving, are entered “per attempt”. For example, total aces should be divided by total serve attempts before inputting.</p>
+        </div>
+
+        <div class="contentCard">
+            <h3>3.) Adjust weights (optional)</h3>
+            <p>
+                Recommended weights are preset to reflect typical positional responsibilities. Users may adjust the weighting distribution to reflect system emphasis or coaching philosophy <strong>by first decreasing one category to allow for allocation of more weight to another.</strong> Any category can be set to zero to exclude those statistics from the final calculation. <strong> The sum of all weights must always equal 100 percent.</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== RECOMMENDED APPLICATIONS PAGE ===================== -->
+<div id="appsPage" class="hidden">
+    <div class="contentPageWrap">
+        <div class="contentHeader">Recommended Applications</div>
+        <hr class="calcFullWidthLine">
+
+        <div class="contentCard">
+            <h3>Player Comparison</h3>
+            <p>VPR provides an <strong>objective</strong> comparison of two or more players to aid strategic coaching decisions. It can be used to evaluate players within your own roster to aid lineup decisions.</p>
+        </div>
+
+        <div class="contentCard">
+            <h3>Player Development Tracking</h3>
+            <p>VPR scores can be used to <strong>track</strong> player <strong>development</strong> over time. When calculated at consistent intervals, changes in a player’s VPR can reveal meaningful performance trends and progression relative to peers or to the player’s own historical performance.</p>
+        </div>
+
+        <div class="contentCard">
+            <h3>Opponent Scouting</h3>
+            <p>VPR can be used to evaluate <strong>opposing players</strong>. This allows coaches to identify performance trends, understand how opponents typically perform, and assess how current form compares to historical norms. When applied to opponent scouting, VPR helps highlight opponents’ standout metrics, supporting <strong>targeted game planning</strong> tailored to the personnel you are preparing to face.</p>
+        </div>
+
+        <div class="contentCard">
+            <h3>Best Practice Notes:</h3>
+            <p>VPR is best used as a <strong>decision support tool</strong> rather than a standalone verdict. It is designed to provide a strategic advantage when evaluating and comparing talent, complementing coaching insight rather than replacing it.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== HELP PAGE ===================== -->
+<div id="helpPage" class="hidden">
+    <div class="contentPageWrap">
+        <div class="contentHeader">Need Help?</div>
+        <hr class="calcFullWidthLine">
+
+        <div class="contentCard helpNarrow">
+            <p>
+                Have questions? <br><br>Want additional information or guidance on using this tool or interpreting VPR results? <br><br>Please contact Ian Rauh at <strong>vpr.analytics.co@gmail.com</strong>.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="landingCredit">VPR Software (2.3.1) by Ian Rauh</div>
+
+<div id="errorModalOverlay" role="dialog" aria-modal="true" aria-labelledby="errorModalTitle">
+    <div id="errorModalCard">
+        <div id="errorModalTitle">Input Errors</div>
+        <div id="errorModalBody">There are 0 errors to fix before your VPR score can be calculated.</div>
+        <div id="errorModalBtnRow">
+            <button id="errorModalOk" type="button">OK</button>
+        </div>
     </div>
 </div>
 
 <script>
-// ===== Landing/Page Switching =====
+// ===== Page refs =====
 const landingPage = document.getElementById("landingPage");
 const calculatorPage = document.getElementById("calculatorPage");
-const landingPosition = document.getElementById("landingPosition");
+const aboutPage = document.getElementById("aboutPage");
+const instructionsPage = document.getElementById("instructionsPage");
+const appsPage = document.getElementById("appsPage");
+const helpPage = document.getElementById("helpPage");
+
 const position = document.getElementById("position");
-
-const landingGoBtn = document.getElementById("landingGoBtn");
-
-// model header elements
-const modelHeaderWrap = document.getElementById("modelHeaderWrap");
-const modelHeaderText = document.getElementById("modelHeaderText");
+const posHeader = document.getElementById("posHeader");
 
 // Access code elements
 const accessWrap = document.getElementById("accessWrap");
@@ -997,148 +1622,401 @@ const accessBtn = document.getElementById("accessBtn");
 const accessError = document.getElementById("accessError");
 const accessGranted = document.getElementById("accessGranted");
 
-// Access code config
-const ACCESS_CODE = "BetaTesting"; /* CHANGE THIS TO CHANGE THE PASSWORD - Change Password */
+// Landing main menu elements
+const landingMainMenuWrap = document.getElementById("landingMainMenuWrap");
+const landingHomeBtn = document.getElementById("landingHomeBtn");
+const landingInstructionsBtn = document.getElementById("landingInstructionsBtn");
+const landingAppsBtn = document.getElementById("landingAppsBtn");
+const landingSelectPosBtn = document.getElementById("landingSelectPosBtn");
+const landingPosSubmenu = document.getElementById("landingPosSubmenu");
+const landingPosGroupBtns = landingPosSubmenu.querySelectorAll(".posGroupBtn");
+const landingPosGroupPanels = landingPosSubmenu.querySelectorAll(".posGroupPanel");
+
+
+
+
+
+// Access code config add password
+const ACCESS_CODES = new Set([
+    "BetaTesting",
+    "iancode1718"
+]);
+
+
+
+
+
 const ACCESS_FLAG_KEY = "vpr_access_granted";
-const ACCESS_TOAST_SHOWN_KEY = "vpr_access_toast_shown";
 
-// Validation behavior flag: only show "blank required" errors after they try to calculate
+// Validation behavior flag
 let hasTriedCalculate = false;
+let lastCalcTriggeredByEnter = false;
 
-/* model label names for header */
-const modelNameByValue = {
-    middle1: "Middle Blocker 1 Model",
-    middle2: "Middle Blocker 2 Model",
-    outside1: "Outside Hitter 1 Model",
-    outside2: "Outside Hitter 2 Model",
-    opposite: "Opposite (6 Rotation) Model",
-    setter: "Setter (5-1) Model",
-    libero: "Libero Model"
+/* Cross-field validation tracking */
+const EPS = 0.0005;
+let lastTouchedHitField = null;
+let lastTouchedServeField = null;
+
+// Error modal elements
+const errorModalOverlay = document.getElementById("errorModalOverlay");
+const errorModalBody = document.getElementById("errorModalBody");
+const errorModalOk = document.getElementById("errorModalOk");
+let pendingFocusEl = null;
+
+// Menu elements
+const menuBtn = document.getElementById("menuBtn");
+const menuDropdown = document.getElementById("menuDropdown");
+const menuHomeBtn = document.getElementById("menuHomeBtn");
+const menuInstructionsBtn = document.getElementById("menuInstructionsBtn");
+const menuAppsBtn = document.getElementById("menuAppsBtn");
+const menuSelectPosBtn = document.getElementById("menuSelectPosBtn");
+const menuHelpBtn = document.getElementById("menuHelpBtn");
+
+// Flyout submenu (hamburger)
+const posSubmenu = document.getElementById("posSubmenu");
+const posGroupBtns = posSubmenu.querySelectorAll(".posGroupBtn");
+const posGroupPanels = posSubmenu.querySelectorAll(".posGroupPanel");
+
+// Breakdown elements
+const radarWrap = document.getElementById("radarWrap");
+const radarCanvas = document.getElementById("radarCanvas");
+const breakdownBars = document.getElementById("breakdownBars");
+const d3Note = document.getElementById("d3Note");
+
+// keep modal closed on load
+errorModalOverlay.classList.remove("isOpen");
+
+// position name map for header
+const positionNames = {
+    middle1: "Middle Blocker 1",
+    middle2: "Middle Blocker 2",
+    outside1: "Outside Hitter 1",
+    outside2: "Outside Hitter 2",
+    opposite: "Opposite (6 Rotation)",
+    setter: "Setter (5-1)",
+    libero: "Libero"
 };
 
-function updateModelHeader(posValue){
-    if (!posValue || posValue === "landing") {
-        modelHeaderWrap.classList.add("hidden");
-        modelHeaderText.innerText = "";
-        return;
-    }
-    modelHeaderText.innerText = modelNameByValue[posValue] || "Selected Model";
-    modelHeaderWrap.classList.remove("hidden");
+function setPosHeader(pos){
+    if (!posHeader) return;
+    posHeader.textContent = positionNames[pos] || "";
 }
 
-function setLandingAccessUI(isGranted) {
-    landingPosition.disabled = !isGranted;
-    landingGoBtn.disabled = !isGranted;
+// ===== Menu open/close =====
+function openMenu(){
+    menuDropdown.classList.add("isOpen");
+    menuBtn.setAttribute("aria-expanded", "true");
+}
+function closeMenu(){
+    menuDropdown.classList.remove("isOpen");
+    menuBtn.setAttribute("aria-expanded", "false");
+    closePosSubmenu();
+}
+function toggleMenu(){
+    const isOpen = menuDropdown.classList.contains("isOpen");
+    if (isOpen) closeMenu();
+    else openMenu();
+}
 
-    if (isGranted) {
-        accessError.innerText = "";
-        accessCodeInput.value = "";
+// ===== Flyout positioning (anchored to Select Position button) =====
+function positionPosSubmenu(){
+    const btnRect = menuSelectPosBtn.getBoundingClientRect();
+    const gap = 10;
+    const flyoutWidth = 290;
 
-        const toastShown = sessionStorage.getItem(ACCESS_TOAST_SHOWN_KEY) === "1";
-        if (toastShown) {
-            accessWrap.classList.add("hidden");
-        } else {
-            accessWrap.classList.remove("hidden");
-            accessRow.classList.remove("hidden");
-            accessGranted.classList.add("hidden");
-        }
-    } else {
-        accessWrap.classList.remove("hidden");
-        accessRow.classList.remove("hidden");
-        accessGranted.classList.add("hidden");
+    const spaceRight = window.innerWidth - (btnRect.right + gap + flyoutWidth);
+    const openRight = spaceRight >= 0;
+
+    let left;
+    if (openRight) left = btnRect.right + gap;
+    else left = btnRect.left - gap - flyoutWidth;
+
+    let top = btnRect.top;
+
+    const flyoutHeightApprox = Math.min(520, posSubmenu.scrollHeight || 520);
+    const maxTop = Math.max(10, window.innerHeight - flyoutHeightApprox - 10);
+    top = Math.min(Math.max(10, top), maxTop);
+
+    posSubmenu.style.left = Math.round(left) + "px";
+    posSubmenu.style.top = Math.round(top) + "px";
+}
+
+function openPosSubmenu(){
+    positionPosSubmenu();
+    posSubmenu.classList.add("isOpen");
+}
+function closePosSubmenu(){
+    posSubmenu.classList.remove("isOpen");
+    closeAllGroupPanels();
+}
+function togglePosSubmenu(){
+    const isOpen = posSubmenu.classList.contains("isOpen");
+    if (isOpen) closePosSubmenu();
+    else openPosSubmenu();
+}
+
+menuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMenu();
+});
+
+menuDropdown.addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+
+posSubmenu.addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+
+document.addEventListener("click", () => {
+    if (menuDropdown.classList.contains("isOpen")) closeMenu();
+});
+
+// Reposition flyout if window changes while open
+window.addEventListener("resize", () => {
+    if (posSubmenu.classList.contains("isOpen") && menuDropdown.classList.contains("isOpen")) {
+        positionPosSubmenu();
+    }
+});
+window.addEventListener("scroll", () => {
+    if (posSubmenu.classList.contains("isOpen") && menuDropdown.classList.contains("isOpen")) {
+        positionPosSubmenu();
+    }
+}, { passive: true });
+
+// ===== group panel open/close (hamburger flyout) =====
+function closeAllGroupPanels(){
+    posGroupPanels.forEach(p => p.classList.remove("isOpen"));
+}
+function toggleGroupPanel(groupKey){
+    const panel = posSubmenu.querySelector('.posGroupPanel[data-panel="' + groupKey + '"]');
+    if (!panel) return;
+
+    const isOpen = panel.classList.contains("isOpen");
+    closeAllGroupPanels();
+    if (!isOpen) panel.classList.add("isOpen");
+}
+posGroupBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const groupKey = btn.getAttribute("data-group");
+        if (!groupKey) return;
+        toggleGroupPanel(groupKey);
+    });
+});
+posSubmenu.querySelectorAll(".posItemBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const pos = btn.getAttribute("data-pos");
+        if (!pos) return;
+        showCalculatorFor(pos);
+    });
+});
+
+// ===== Landing submenu open/close =====
+function closeAllLandingGroupPanels(){
+    landingPosGroupPanels.forEach(p => p.classList.remove("isOpen"));
+}
+function toggleLandingGroupPanel(groupKey){
+    const panel = landingPosSubmenu.querySelector('.posGroupPanel[data-panel="' + groupKey + '"]');
+    if (!panel) return;
+
+    const isOpen = panel.classList.contains("isOpen");
+    closeAllLandingGroupPanels();
+    if (!isOpen) panel.classList.add("isOpen");
+}
+function closeLandingPosSubmenu(){
+    landingPosSubmenu.classList.remove("isOpen");
+    closeAllLandingGroupPanels();
+}
+function toggleLandingPosSubmenu(){
+    const isOpen = landingPosSubmenu.classList.contains("isOpen");
+    if (isOpen) closeLandingPosSubmenu();
+    else landingPosSubmenu.classList.add("isOpen");
+}
+
+landingPosGroupBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const groupKey = btn.getAttribute("data-group");
+        if (!groupKey) return;
+        toggleLandingGroupPanel(groupKey);
+    });
+});
+landingPosSubmenu.querySelectorAll(".posItemBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const pos = btn.getAttribute("data-pos");
+        if (!pos) return;
+        showCalculatorFor(pos);
+    });
+});
+
+// ===== Show/hide page helper =====
+function hideAllPages(){
+    landingPage.classList.add("hidden");
+    calculatorPage.classList.add("hidden");
+    aboutPage.classList.add("hidden");
+    instructionsPage.classList.add("hidden");
+    appsPage.classList.add("hidden");
+    helpPage.classList.add("hidden");
+}
+
+function setMenuVisible(isVisible){
+    if (isVisible) menuBtn.style.display = "inline-flex";
+    else {
+        menuBtn.style.display = "none";
+        closeMenu();
     }
 }
 
+// ===== Error modal =====
+function showErrorModal(errorCount, focusEl){
+    if (!errorCount || errorCount <= 0) return;
+    pendingFocusEl = focusEl || null;
+    errorModalBody.innerText = "There are " + errorCount + " errors to fix before your VPR score can be calculated.";
+    errorModalOverlay.classList.add("isOpen");
+}
+function hideErrorModal(){
+    errorModalOverlay.classList.remove("isOpen");
+    const el = pendingFocusEl;
+    pendingFocusEl = null;
+    if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.focus({ preventScroll: true });
+    }
+}
+errorModalOk.addEventListener("click", hideErrorModal);
+errorModalOverlay.addEventListener("click", (e) => {
+    if (e.target === errorModalOverlay) hideErrorModal();
+});
+
+// ===== Access helpers =====
 function hasAccess() {
     return sessionStorage.getItem(ACCESS_FLAG_KEY) === "1";
 }
-
 function grantAccess() {
     sessionStorage.setItem(ACCESS_FLAG_KEY, "1");
 }
 
-function showAccessGrantedToastThenHide() {
+function showLandingAccessOnly(){
+    accessWrap.classList.remove("hidden");
+    accessRow.classList.remove("hidden");
+    accessGranted.classList.add("hidden");
+    accessError.innerText = "";
+    accessCodeInput.value = "";
+
+    landingMainMenuWrap.classList.add("hidden");
+    closeLandingPosSubmenu();
+}
+
+function showLandingMainMenu(){
+    accessWrap.classList.add("hidden");
+    landingMainMenuWrap.classList.remove("hidden");
+    closeLandingPosSubmenu();
+}
+
+function showAccessGrantedToastThenMainMenu() {
     accessWrap.classList.remove("hidden");
     accessError.innerText = "";
     accessRow.classList.add("hidden");
     accessGranted.classList.remove("hidden");
-    sessionStorage.setItem(ACCESS_TOAST_SHOWN_KEY, "1");
 
     requestAnimationFrame(() => {
         setTimeout(() => {
-            accessWrap.classList.add("hidden");
+            showLandingMainMenu();
         }, 1200);
     });
 }
 
 function tryValidateAccess() {
     const val = (accessCodeInput.value || "").trim();
-
-    if (val === ACCESS_CODE) {
+    if (ACCESS_CODES.has(val)) {
         grantAccess();
-        landingPosition.disabled = false;
-        landingGoBtn.disabled = false;
-
-        accessError.innerText = "";
-        accessCodeInput.value = "";
-
-        showAccessGrantedToastThenHide();
+        showAccessGrantedToastThenMainMenu();
     } else {
         accessError.innerText = "Error: Incorrect Code, Try Again";
     }
 }
 
-function showCalculatorFor(pos){
-    landingPage.classList.add("hidden");
-    calculatorPage.classList.remove("hidden");
-
-    position.value = pos;
-    updateModelHeader(pos);
-    updateForm();
-    initializeWeights(pos);
-    clearInputs();
-}
-
-function showLanding(){
-    calculatorPage.classList.add("hidden");
-    landingPage.classList.remove("hidden");
-
-    landingPosition.value = "";
-    position.value = "middle1";
-
-    clearInputs();
-    setLandingAccessUI(hasAccess());
-}
-
-// Landing requires clicking Go
-landingGoBtn.addEventListener("click", () => {
-    if (!hasAccess()) return;
-    const pos = landingPosition.value;
-    if (!pos) return;
-    showCalculatorFor(pos);
-});
-
-// Pressing Enter on the landing page triggers Go (after access + selection)
-landingPosition.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-    if (!hasAccess()) return;
-
-    const pos = landingPosition.value;
-    if (!pos) return;
-
-    e.preventDefault();
-    landingGoBtn.click();
-});
-
-// Access button
 accessBtn.addEventListener("click", () => {
     tryValidateAccess();
 });
-
-// Clear access error while typing
 accessCodeInput.addEventListener("input", () => {
     accessError.innerText = "";
 });
+
+// ===== Navigation =====
+function showLanding(){
+    hideAllPages();
+    landingPage.classList.remove("hidden");
+    setMenuVisible(false);
+
+    clearInputs();
+
+    if (hasAccess()) showLandingMainMenu();
+    else showLandingAccessOnly();
+}
+
+function showCalculatorFor(pos){
+    hideAllPages();
+    calculatorPage.classList.remove("hidden");
+    setMenuVisible(true);
+
+    position.value = pos;
+
+    setPosHeader(pos);
+    navigateFromCalculatorSelection(pos);
+    closeMenu();
+    window.scrollTo(0, 0);
+}
+
+function showAbout(){
+    hideAllPages();
+    aboutPage.classList.remove("hidden");
+    setMenuVisible(true);
+    closeMenu();
+    window.scrollTo(0, 0);
+}
+
+function showInstructions(){
+    hideAllPages();
+    instructionsPage.classList.remove("hidden");
+    setMenuVisible(true);
+    closeMenu();
+    window.scrollTo(0, 0);
+}
+
+function showApps(){
+    hideAllPages();
+    appsPage.classList.remove("hidden");
+    setMenuVisible(true);
+    closeMenu();
+    window.scrollTo(0, 0);
+}
+
+function showHelp(){
+    hideAllPages();
+    helpPage.classList.remove("hidden");
+    setMenuVisible(true);
+    closeMenu();
+    window.scrollTo(0, 0);
+}
+
+// Hamburger menu routing
+menuHomeBtn.addEventListener("click", () => { showAbout(); });
+menuInstructionsBtn.addEventListener("click", () => { showInstructions(); });
+menuAppsBtn.addEventListener("click", () => { showApps(); });
+menuHelpBtn.addEventListener("click", () => { showHelp(); });
+
+// flyout only when hamburger dropdown is open
+menuSelectPosBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!menuDropdown.classList.contains("isOpen")) return;
+    togglePosSubmenu();
+});
+
+// Landing main menu routing
+landingHomeBtn.addEventListener("click", () => { showAbout(); });
+landingInstructionsBtn.addEventListener("click", () => { showInstructions(); });
+landingAppsBtn.addEventListener("click", () => { showApps(); });
+landingSelectPosBtn.addEventListener("click", () => { toggleLandingPosSubmenu(); });
 
 // Default recommended weights per position
 const defaultWeights = {
@@ -1285,20 +2163,31 @@ function clearInputs() {
     const globalError = document.getElementById("globalError");
     if (globalError) globalError.innerText = "";
 
-    const scores = document.querySelectorAll(".scoreDisplay");
-    scores.forEach(score => { score.innerText = "0"; score.style.display = "block"; });
+    // breakdown hidden until calculate
+    if (radarWrap) radarWrap.classList.add("hidden");
 
-    const bell = document.getElementById("bellWrapper");
-    if(bell) bell.classList.add("hidden");
+    // reset radar + bars
+    if (radarCanvas) {
+        const ctx = radarCanvas.getContext("2d");
+        if (ctx) ctx.clearRect(0, 0, radarCanvas.width || 0, radarCanvas.height || 0);
+    }
+    if (breakdownBars) {
+        breakdownBars.innerHTML = "";
+        breakdownBars.style.display = "none";
+    }
+    if (radarCanvas) radarCanvas.style.display = "block";
 
     const vpr = document.getElementById("vprResult");
     if(vpr) vpr.innerText = "";
 
-    // Reset behavior for "required" errors
     hasTriedCalculate = false;
+    lastTouchedHitField = null;
+    lastTouchedServeField = null;
+
+    hideErrorModal();
 }
 
-// ======== Real-time Validation ========
+// ======== Validation ========
 function validateField(fieldId, min, max, allowNegative = false, opts = {}) {
     const { requireNonBlank = false } = opts;
 
@@ -1313,7 +2202,6 @@ function validateField(fieldId, min, max, allowNegative = false, opts = {}) {
     const weightEl = document.getElementById("w_" + sliderId);
     const weightValue = weightEl ? Number(weightEl.value) : 100;
 
-    // If the category weight is 0, ignore validation entirely
     if (weightValue === 0) {
         el.classList.remove("invalid", "valid");
         err.innerText = "";
@@ -1326,7 +2214,7 @@ function validateField(fieldId, min, max, allowNegative = false, opts = {}) {
         if (requireNonBlank) {
             el.classList.add("invalid");
             el.classList.remove("valid");
-            err.innerText = "Required (weight > 0)";
+            err.innerText = "Required: (weight > 0)";
             return false;
         } else {
             el.classList.remove("invalid", "valid");
@@ -1356,32 +2244,6 @@ function validateField(fieldId, min, max, allowNegative = false, opts = {}) {
     el.classList.remove("valid");
     err.innerText = errors.join(", ");
     return false;
-}
-
-function syncCategoryValidationByWeight(categoryId) {
-    const cat = document.getElementById(categoryId);
-    if (!cat) return;
-
-    const slider = document.getElementById("w_" + categoryId);
-    const weightValue = slider ? Number(slider.value) : 100;
-
-    const inputs = cat.querySelectorAll("input[type='number']");
-    inputs.forEach(input => {
-        const err = document.getElementById("err_" + input.id);
-
-        if (weightValue === 0) {
-            input.classList.remove("invalid", "valid");
-            if (err) err.innerText = "";
-            return;
-        }
-
-        const rule = validationRules[input.id];
-        if (!rule) return;
-
-        validateField(input.id, rule.min, rule.max, rule.allowNegative, {
-            requireNonBlank: hasTriedCalculate
-        });
-    });
 }
 
 const validationRules = {
@@ -1414,6 +2276,171 @@ function formatToStepDecimals(inputEl) {
     inputEl.value = num.toFixed(decimals);
 }
 
+function getCategoryWeightForField(fieldId){
+    const el = document.getElementById(fieldId);
+    if (!el) return 0;
+    const categoryId = el.closest(".category").id;
+
+    let sliderId = categoryId;
+    if (categoryId === "blockingCombined") sliderId = "blocking";
+
+    const weightEl = document.getElementById("w_" + sliderId);
+    return weightEl ? Number(weightEl.value) : 0;
+}
+
+function clearRelationErrorIfMatches(fieldId, prefix){
+    const err = document.getElementById("err_" + fieldId);
+    const el = document.getElementById(fieldId);
+    if (!err || !el) return;
+
+    if ((err.innerText || "").startsWith(prefix)) {
+        err.innerText = "";
+        if ((el.value || "").trim() === "") {
+            el.classList.remove("invalid", "valid");
+        } else {
+            el.classList.remove("invalid");
+            el.classList.add("valid");
+        }
+    }
+}
+
+function setRelationError(fieldId, msg){
+    const err = document.getElementById("err_" + fieldId);
+    const el = document.getElementById(fieldId);
+    if (!err || !el) return;
+
+    err.innerText = msg;
+    el.classList.add("invalid");
+    el.classList.remove("valid");
+}
+
+function fieldsHaveValues(aId, bId){
+    const a = (document.getElementById(aId)?.value || "").trim();
+    const b = (document.getElementById(bId)?.value || "").trim();
+    return a !== "" && b !== "";
+}
+
+function parseVal(id){
+    const raw = (document.getElementById(id)?.value || "").trim();
+    if (raw === "") return null;
+    const v = Number(raw);
+    if (!Number.isFinite(v)) return null;
+    return v;
+}
+
+function validateHitKillRelation(){
+    const w = getCategoryWeightForField("hitPct");
+    if (w === 0) {
+        clearRelationErrorIfMatches("hitPct", "Error: Hitting % cannot exceed Kill %");
+        clearRelationErrorIfMatches("killPct", "Error: Hitting % cannot exceed Kill %");
+        return { ok: true, target: null };
+    }
+
+    if (!fieldsHaveValues("hitPct", "killPct")) {
+        clearRelationErrorIfMatches("hitPct", "Error: Hitting % cannot exceed Kill %");
+        clearRelationErrorIfMatches("killPct", "Error: Hitting % cannot exceed Kill %");
+        return { ok: true, target: null };
+    }
+
+    const basicOkA = validateField("hitPct", validationRules.hitPct.min, validationRules.hitPct.max, validationRules.hitPct.allowNegative, {
+        requireNonBlank: hasTriedCalculate
+    });
+    const basicOkB = validateField("killPct", validationRules.killPct.min, validationRules.killPct.max, validationRules.killPct.allowNegative, {
+        requireNonBlank: hasTriedCalculate
+    });
+    if (!basicOkA || !basicOkB) {
+        return { ok: false, target: (!basicOkA ? "hitPct" : "killPct") };
+    }
+
+    const hit = parseVal("hitPct");
+    const kill = parseVal("killPct");
+    if (hit === null || kill === null) return { ok: true, target: null };
+
+    const invalid = hit > (kill + EPS);
+    const target = lastTouchedHitField || "hitPct";
+
+    clearRelationErrorIfMatches("hitPct", "Error: Hitting % cannot exceed Kill %");
+    clearRelationErrorIfMatches("killPct", "Error: Hitting % cannot exceed Kill %");
+
+    if (invalid) {
+        setRelationError(target, "Error: Hitting % cannot exceed Kill %");
+        return { ok: false, target };
+    }
+
+    return { ok: true, target: null };
+}
+
+function validateServeSumRelation(){
+    const w = getCategoryWeightForField("aces");
+    if (w === 0) {
+        clearRelationErrorIfMatches("aces", "Error: Aces + Errors per att. cannot exceed 1.00");
+        clearRelationErrorIfMatches("serveErrors", "Error: Aces + Errors per att. cannot exceed 1.00");
+        return { ok: true, target: null };
+    }
+
+    if (!fieldsHaveValues("aces", "serveErrors")) {
+        clearRelationErrorIfMatches("aces", "Error: Aces + Errors per att. cannot exceed 1.00");
+        clearRelationErrorIfMatches("serveErrors", "Error: Aces + Errors per att. cannot exceed 1.00");
+        return { ok: true, target: null };
+    }
+
+    const basicOkA = validateField("aces", validationRules.aces.min, validationRules.aces.max, validationRules.aces.allowNegative, {
+        requireNonBlank: hasTriedCalculate
+    });
+    const basicOkB = validateField("serveErrors", validationRules.serveErrors.min, validationRules.serveErrors.max, validationRules.serveErrors.allowNegative, {
+        requireNonBlank: hasTriedCalculate
+    });
+    if (!basicOkA || !basicOkB) {
+        return { ok: false, target: (!basicOkA ? "aces" : "serveErrors") };
+    }
+
+    const a = parseVal("aces");
+    const e = parseVal("serveErrors");
+    if (a === null || e === null) return { ok: true, target: null };
+
+    const invalid = (a + e) > (1 + EPS);
+    const target = lastTouchedServeField || "aces";
+
+    clearRelationErrorIfMatches("aces", "Error: Aces + Errors per att. cannot exceed 1.00");
+    clearRelationErrorIfMatches("serveErrors", "Error: Aces + Errors per att. cannot exceed 1.00");
+
+    if (invalid) {
+        setRelationError(target, "Error: Aces + Errors per att. cannot exceed 1.00");
+        return { ok: false, target };
+    }
+
+    return { ok: true, target: null };
+}
+
+function syncCategoryValidationByWeight(categoryId) {
+    const cat = document.getElementById(categoryId);
+    if (!cat) return;
+
+    const slider = document.getElementById("w_" + categoryId);
+    const weightValue = slider ? Number(slider.value) : 100;
+
+    const inputs = cat.querySelectorAll("input[type='number']");
+    inputs.forEach(input => {
+        const err = document.getElementById("err_" + input.id);
+
+        if (weightValue === 0) {
+            input.classList.remove("invalid", "valid");
+            if (err) err.innerText = "";
+            return;
+        }
+
+        const rule = validationRules[input.id];
+        if (!rule) return;
+
+        validateField(input.id, rule.min, rule.max, rule.allowNegative, {
+            requireNonBlank: hasTriedCalculate
+        });
+    });
+
+    validateHitKillRelation();
+    validateServeSumRelation();
+}
+
 function attachValidation(){
     const fields = Object.entries(validationRules).map(([id, r]) => ({ id, ...r }));
 
@@ -1422,6 +2449,9 @@ function attachValidation(){
         if(!el) return;
 
         el.addEventListener("input", () => {
+            if (f.id === "hitPct" || f.id === "killPct") lastTouchedHitField = f.id;
+            if (f.id === "aces" || f.id === "serveErrors") lastTouchedServeField = f.id;
+
             validateField(f.id, f.min, f.max, f.allowNegative, {
                 requireNonBlank: hasTriedCalculate
             });
@@ -1429,9 +2459,13 @@ function attachValidation(){
 
         el.addEventListener("blur", () => {
             formatToStepDecimals(el);
+
             validateField(f.id, f.min, f.max, f.allowNegative, {
                 requireNonBlank: hasTriedCalculate
             });
+
+            if (f.id === "hitPct" || f.id === "killPct") validateHitKillRelation();
+            if (f.id === "aces" || f.id === "serveErrors") validateServeSumRelation();
         });
 
         el.addEventListener("keydown", e => {
@@ -1440,16 +2474,360 @@ function attachValidation(){
     });
 }
 
-// ======== Main ========
-window.onload = () => {
-    attachValidation();
+// ======== Calculator navigation setup ========
+function navigateFromCalculatorSelection(selected){
+    position.value = selected;
+    setPosHeader(selected);
+    updateForm();
+    initializeWeights(selected);
+    clearInputs();
+}
 
-    landingPage.classList.remove("hidden");
-    calculatorPage.classList.add("hidden");
+// ======== Full validation for Calculate ========
+function runFullValidationForCalculate(){
+    const invalidFields = new Set();
+    let firstInvalidEl = null;
 
-    setLandingAccessUI(hasAccess());
-};
+    const sliders = getVisibleWeightSliders();
+    const pos = position.value;
+    const m = models[pos];
+    if (!m) return { ok: false, errorCount: 1, firstInvalidEl: null };
 
+    sliders.forEach((sliderId, idx) => {
+        const weight = Number(document.getElementById("w_" + sliderId).value);
+        if (weight === 0) return;
+
+        const catStats = m.categories[idx] || [];
+        catStats.forEach((stat) => {
+            const rules = validationRules[stat];
+            if (!rules) return;
+
+            const ok = validateField(stat, rules.min, rules.max, rules.allowNegative, {
+                requireNonBlank: true
+            });
+
+            if (!ok) {
+                invalidFields.add(stat);
+                if (!firstInvalidEl) firstInvalidEl = document.getElementById(stat);
+            }
+        });
+    });
+
+    const hitRel = validateHitKillRelation();
+    if (!hitRel.ok && hitRel.target) {
+        invalidFields.add(hitRel.target);
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById(hitRel.target);
+    }
+
+    const serveRel = validateServeSumRelation();
+    if (!serveRel.ok && serveRel.target) {
+        invalidFields.add(serveRel.target);
+        if (!firstInvalidEl) firstInvalidEl = document.getElementById(serveRel.target);
+    }
+
+    return { ok: invalidFields.size === 0, errorCount: invalidFields.size, firstInvalidEl };
+}
+
+// ======== Breakdown mode switching (Radar vs Bars) ========
+function showBreakdownMode(mode){
+    if (!radarWrap) return;
+
+    radarWrap.classList.remove("hidden");
+
+    if (mode === "bars") {
+        radarWrap.classList.add("barsMode");
+        if (breakdownBars) breakdownBars.style.display = "flex";
+        if (radarCanvas) radarCanvas.style.display = "none";
+        if (d3Note) d3Note.style.display = "block";
+        return;
+    }
+
+    radarWrap.classList.remove("barsMode");
+    if (breakdownBars) breakdownBars.style.display = "none";
+    if (radarCanvas) radarCanvas.style.display = "block";
+    if (d3Note) d3Note.style.display = "block";
+}
+
+function renderBreakdownBars(categoryLabels, categoryScores){
+    if (!breakdownBars) return;
+
+    breakdownBars.innerHTML = "";
+
+    for (let i = 0; i < categoryLabels.length; i++){
+        const label = categoryLabels[i];
+        const score = Math.max(0, Math.min(Number(categoryScores[i]) || 0, 1000));
+        const pct = (score / 1000) * 100;
+
+        const row = document.createElement("div");
+        row.className = "barRow";
+
+        const lab = document.createElement("div");
+        lab.className = "barLabel";
+        lab.textContent = label;
+
+        const track = document.createElement("div");
+        track.className = "barTrack";
+
+        const fill = document.createElement("div");
+        fill.className = "barFill";
+        fill.style.width = pct.toFixed(1) + "%";
+
+        const marker = document.createElement("div");
+        marker.className = "barD3Marker";
+
+        track.appendChild(fill);
+        track.appendChild(marker);
+
+        const val = document.createElement("div");
+        val.className = "barScore";
+        val.textContent = String(Math.round(score));
+
+        row.appendChild(lab);
+        row.appendChild(track);
+        row.appendChild(val);
+
+        breakdownBars.appendChild(row);
+    }
+}
+
+// ======== Radar chart (draw ONLY on Calculate) ========
+function getCategoryDisplayName(sliderId){
+    const map = {
+        attacking: "Attacking",
+        blocking: "Blocking",
+        blockingMiddle: "Blocking",
+        serving: "Serving",
+        defense: "Defense",
+        receive: "Serve Receive",
+        setting: "Setting"
+    };
+    return map[sliderId] || sliderId;
+}
+
+function sizeCanvasToCSS(canvas, cssW, cssH){
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, Math.floor(cssW * dpr));
+    canvas.height = Math.max(1, Math.floor(cssH * dpr));
+    return dpr;
+}
+
+function drawRadarChart(finalVpr, categoryLabels, categoryScores){
+    if (!radarCanvas || !radarWrap) return;
+
+    const ctx = radarCanvas.getContext("2d");
+    if (!ctx) return;
+
+    showBreakdownMode("radar");
+
+    const cssW = radarCanvas.clientWidth || radarWrap.clientWidth || 520;
+    const cssH = radarCanvas.clientHeight || 420;
+
+    const dpr = sizeCanvasToCSS(radarCanvas, cssW, cssH);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    const n = categoryLabels.length;
+    if (!n) return;
+
+    const centerX = cssW / 2;
+    const centerY = cssH / 2 + 6;
+
+    const radius = Math.max(160, Math.min(cssW, cssH) / 2 - 42);
+    const startAngle = -Math.PI / 2;
+
+    function polarToXY(r, angle){
+        return {
+            x: centerX + r * Math.cos(angle),
+            y: centerY + r * Math.sin(angle)
+        };
+    }
+
+    function drawPolygonAt(value0to1000, strokeStyle, lineWidth, dash){
+        const r = (Math.max(0, Math.min(value0to1000, 1000)) / 1000) * radius;
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i < n; i++){
+            const a = startAngle + (i * 2 * Math.PI / n);
+            const p = polarToXY(r, a);
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth;
+        if (dash && dash.length) ctx.setLineDash(dash);
+        else ctx.setLineDash([]);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    drawPolygonAt(250, "rgba(17,24,39,0.10)", 1, []);
+    drawPolygonAt(500, getComputedStyle(document.documentElement).getPropertyValue("--vpr-d3-blue").trim() || "#2563eb", 3, []);
+    drawPolygonAt(750, "rgba(17,24,39,0.10)", 1, []);
+    drawPolygonAt(1000, "rgba(17,24,39,0.14)", 1, []);
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(17,24,39,0.10)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < n; i++){
+        const a = startAngle + (i * 2 * Math.PI / n);
+        const p = polarToXY(radius, a);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    const clamped = categoryScores.map(v => Math.max(0, Math.min(Number(v) || 0, 1000)));
+
+    ctx.save();
+    ctx.beginPath();
+    for (let i = 0; i < n; i++){
+        const a = startAngle + (i * 2 * Math.PI / n);
+        const r = (clamped[i] / 1000) * radius;
+        const p = polarToXY(r, a);
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+
+    ctx.fillStyle = "rgba(43,122,43,0.20)";
+    ctx.strokeStyle = "rgba(43,122,43,0.80)";
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "rgba(43,122,43,0.95)";
+    for (let i = 0; i < n; i++){
+        const a = startAngle + (i * 2 * Math.PI / n);
+        const r = (clamped[i] / 1000) * radius;
+        const p = polarToXY(r, a);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.font = "800 12px Inter, Arial, sans-serif";
+    ctx.fillStyle = "#111827";
+
+    for (let i = 0; i < n; i++){
+        const a = startAngle + (i * 2 * Math.PI / n);
+        const edge = polarToXY(radius + 12, a);
+
+        const cos = Math.cos(a);
+        const sin = Math.sin(a);
+
+        if (Math.abs(cos) < 0.15) ctx.textAlign = "center";
+        else ctx.textAlign = cos > 0 ? "left" : "right";
+
+        if (Math.abs(sin) < 0.15) ctx.textBaseline = "middle";
+        else ctx.textBaseline = sin > 0 ? "top" : "bottom";
+
+        const label = categoryLabels[i] + " (" + Math.round(clamped[i]) + ")";
+        ctx.fillText(label, edge.x, edge.y);
+    }
+    ctx.restore();
+}
+
+// ===== Calculate click =====
+document.getElementById("calculateBtn").addEventListener("click", () => {
+    hasTriedCalculate = true;
+
+    const globalError = document.getElementById("globalError");
+    if (globalError) globalError.innerText = "";
+
+    const sliders = getVisibleWeightSliders();
+
+    // 1) Weights must sum to 100
+    const totalWeight = sliders.reduce((s, id) => s + Number(document.getElementById("w_" + id).value), 0);
+    if (totalWeight !== 100) {
+        if (globalError) globalError.innerText = "Error: Weights must sum to 100%.";
+        return;
+    }
+
+    // 2) Validate
+    const validation = runFullValidationForCalculate();
+    if (!validation.ok) {
+        showErrorModal(validation.errorCount, validation.firstInvalidEl);
+        return;
+    }
+
+    // 3) Calculate (only categories with weight > 0 contribute any input values)
+    const pos = position.value;
+    const m = models[pos];
+    if (!m) return;
+
+    const inputsValues = {};
+    sliders.forEach((id, idx) => {
+        const weight = Number(document.getElementById("w_" + id).value);
+        if (weight === 0) return;
+
+        (m.categories[idx] || []).forEach((stat) => {
+            const valEl = document.getElementById(stat);
+            inputsValues[stat] = parseFloat((valEl && valEl.value) ? valEl.value : 0);
+        });
+    });
+
+    const scoresAll = calculateCategoryScores(pos, inputsValues);
+
+    const slidersVisible = getVisibleWeightSliders();
+    const scoreMap = {};
+    slidersVisible.forEach((id, idx) => {
+        const w = Number(document.getElementById("w_" + id).value);
+        if (w === 0) return;
+        scoreMap[id] = scoresAll[idx] || 0;
+    });
+
+    const finalVpr = calculateFinalVPR(scoreMap, getNormalizedWeights());
+    vprResult.innerText = "VPR: " + Math.round(finalVpr);
+
+    // ===== Breakdown visualization =====
+    const activeLabels = [];
+    const activeScores = [];
+    slidersVisible.forEach((id, idx) => {
+        const w = Number(document.getElementById("w_" + id).value);
+        if (w === 0) return;
+        activeLabels.push(getCategoryDisplayName(id));
+        activeScores.push(scoresAll[idx] || 0);
+    });
+
+    if (activeLabels.length <= 2) {
+        showBreakdownMode("bars");
+        renderBreakdownBars(activeLabels, activeScores);
+    } else {
+        drawRadarChart(finalVpr, activeLabels, activeScores);
+    }
+    
+    if (lastCalcTriggeredByEnter) {
+        lastCalcTriggeredByEnter = false;
+
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth"
+        });
+    } else {
+        lastCalcTriggeredByEnter = false;
+    }
+
+});
+
+// ===== Clear click =====
+document.getElementById("clearBtn").addEventListener("click", () => {
+    clearInputs();
+    initializeWeights(position.value);
+
+    getVisibleWeightSliders().forEach(id => {
+        document.getElementById("l_" + id).innerText = Math.round(document.getElementById("w_" + id).value) + "%";
+    });
+});
+
+// ===== Slider listeners =====
 ["w_attacking","w_blocking","w_blockingMiddle","w_serving","w_defense","w_receive","w_setting"].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
@@ -1466,290 +2844,65 @@ window.onload = () => {
     });
 });
 
-/* ===========================
-   CHANGED: instant navigation
-   =========================== */
-let isProgrammaticPositionSet = false;
-
-function navigateFromCalculatorSelection(selected){
-    if (selected === "landing") {
-        showLanding();
-        return;
-    }
-
-    updateModelHeader(selected);
-    updateForm();
-    initializeWeights(selected);
-    clearInputs();
-}
-
-// When user changes dropdown, navigate immediately (no Go button)
-position.addEventListener("change", () => {
-    if (isProgrammaticPositionSet) return;
-    navigateFromCalculatorSelection(position.value);
-});
-
-// Ensure programmatic sets do not retrigger navigation loops
-function showCalculatorFor(pos){
-    landingPage.classList.add("hidden");
-    calculatorPage.classList.remove("hidden");
-
-    isProgrammaticPositionSet = true;
-    position.value = pos;
-    isProgrammaticPositionSet = false;
-
-    navigateFromCalculatorSelection(pos);
-}
-
-function showLanding(){
-    calculatorPage.classList.add("hidden");
-    landingPage.classList.remove("hidden");
-
-    landingPosition.value = "";
-
-    isProgrammaticPositionSet = true;
-    position.value = "middle1";
-    isProgrammaticPositionSet = false;
-
-    clearInputs();
-    setLandingAccessUI(hasAccess());
-}
-
-function writeCategoryScores(pos, scores){
-    const sliders = getVisibleWeightSliders();
-    const map = {};
-
-    sliders.forEach((id) => {
-        if (id === "blockingMiddle") map[id] = "blockingScoreMiddle";
-        else if (id === "blocking") map[id] = "blockingScore";
-        else if (id === "attacking") map[id] = "attackingScore";
-        else if (id === "serving") map[id] = "servingScore";
-        else if (id === "defense") map[id] = "defenseScore";
-        else if (id === "receive") map[id] = "receiveScore";
-        else if (id === "setting") map[id] = "settingScore";
-    });
-
-    sliders.forEach(id => {
-        const el = document.getElementById(map[id]);
-        if (el) {
-            if (Number(document.getElementById("w_" + id).value) === 0) {
-                el.style.display = "none";
-            } else {
-                el.style.display = "block";
-                el.innerText = scores[sliders.indexOf(id)].toFixed(0);
-            }
-        }
-    });
-}
-
-document.getElementById("calculateBtn").addEventListener("click", () => {
-    hasTriedCalculate = true;
-
-    const globalError = document.getElementById("globalError");
-    if (globalError) globalError.innerText = "";
-
-    const sliders = getVisibleWeightSliders();
-
-    // 1) Weights must sum to 100 (no popup)
-    const totalWeight = sliders.reduce((s, id) => s + Number(document.getElementById("w_" + id).value), 0);
-    if (totalWeight !== 100) {
-        if (globalError) globalError.innerText = "Error: Weights must sum to 100%.";
-        return;
-    }
-
-    // 2) Validate only required fields (weight > 0), show blank errors now
-    let allValid = true;
-    let firstInvalidEl = null;
-
-    const pos = position.value;
-    const m = models[pos];
-    if (!m) return;
-
-    sliders.forEach((sliderId, idx) => {
-        const weight = Number(document.getElementById("w_" + sliderId).value);
-        if (weight === 0) return;
-
-        const catStats = m.categories[idx] || [];
-        catStats.forEach((stat) => {
-            const rules = validationRules[stat];
-            if (!rules) return;
-
-            const ok = validateField(stat, rules.min, rules.max, rules.allowNegative, {
-                requireNonBlank: true
-            });
-
-            if (!ok) {
-                allValid = false;
-                if (!firstInvalidEl) firstInvalidEl = document.getElementById(stat);
-            }
-        });
-    });
-
-    if (!allValid) {
-        if (firstInvalidEl) {
-            firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
-            firstInvalidEl.focus({ preventScroll: true });
-        }
-        return;
-    }
-
-    // 3) Proceed with existing calculations
-    const inputsValues = {};
-    sliders.forEach((id, idx) => {
-        const weight = Number(document.getElementById("w_" + id).value);
-        if (weight === 0) return;
-
-        (m.categories[idx] || []).forEach((stat) => {
-            const valEl = document.getElementById(stat);
-            inputsValues[stat] = parseFloat((valEl && valEl.value) ? valEl.value : 0);
-        });
-    });
-
-    const scores = calculateCategoryScores(pos, inputsValues);
-
-    const slidersVisible = getVisibleWeightSliders();
-    const scoreMap = {};
-    slidersVisible.forEach((id, idx) => {
-        scoreMap[id] = scores[idx] || 0;
-    });
-
-    writeCategoryScores(pos, scores);
-
-    const final = calculateFinalVPR(scoreMap, getNormalizedWeights());
-    vprResult.innerText = "VPR: " + Math.round(final);
-
-    drawBellCurve(final);
-});
-
-document.getElementById("clearBtn").addEventListener("click", () => {
-    clearInputs();
-    initializeWeights(position.value);
-
-    getVisibleWeightSliders().forEach(id => {
-        document.getElementById("l_" + id).innerText = Math.round(document.getElementById("w_" + id).value) + "%";
-    });
-});
-
-// Enter key behavior
+// ===== Enter/Escape behavior =====
 document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        if (errorModalOverlay.classList.contains("isOpen")) {
+            e.preventDefault();
+            hideErrorModal();
+            return;
+        }
+        if (menuDropdown.classList.contains("isOpen")) {
+            e.preventDefault();
+            closeMenu();
+            return;
+        }
+        if (posSubmenu.classList.contains("isOpen")) {
+            e.preventDefault();
+            closePosSubmenu();
+            return;
+        }
+        if (landingPosSubmenu.classList.contains("isOpen")) {
+            e.preventDefault();
+            closeLandingPosSubmenu();
+            return;
+        }
+    }
+
     if (e.key !== "Enter") return;
+
+    if (errorModalOverlay.classList.contains("isOpen")) {
+        e.preventDefault();
+        hideErrorModal();
+        return;
+    }
 
     const activeEl = document.activeElement;
 
-    // If typing access code, Enter validates code
     if (activeEl && activeEl.id === "accessCode") {
         e.preventDefault();
         tryValidateAccess();
         return;
     }
 
-    // If we're on the landing page, Enter triggers Go (after access + selection)
     const landingVisible = !landingPage.classList.contains("hidden");
-    if (landingVisible) {
-        if (hasAccess() && landingPosition.value) {
-            e.preventDefault();
-            landingGoBtn.click();
-        }
-        return;
-    }
+    if (landingVisible) return;
 
-    // On calculator page, don't hijack Enter when a select is focused
-    if (activeEl && activeEl.tagName === "SELECT") return;
+    if (menuDropdown.classList.contains("isOpen")) return;
 
-    // Otherwise Enter calculates
     e.preventDefault();
+    lastCalcTriggeredByEnter = true;
     document.getElementById("calculateBtn").click();
 });
 
-// ===== Bell Curve =====
-function drawBellCurve(vpr){
-    const percentile = Math.max(0, Math.min(vpr / 1000, 1));
-    const width = 700;
-    const baseY = 185;
-    const center = width / 2;
-    const std = width / 5;
+// ===== Init =====
+window.onload = () => {
+    attachValidation();
+    showLanding();
 
-    let outline = "";
-    let fill = "M 0 " + baseY + " ";
-
-    for(let x=0;x<=width;x++){
-        const y = baseY - Math.exp(-0.5 * Math.pow((x-center)/std,2)) * 140;
-        outline += (x===0?"M ":" L ") + x + " " + y;
-        if(x <= percentile * width){
-            fill += "L " + x + " " + y + " ";
-        }
-    }
-
-    fill += "L " + (percentile * width) + " " + baseY + " Z";
-
-    document.getElementById("bellOutline").setAttribute("d", outline);
-    document.getElementById("bellFill").setAttribute("d", fill);
-
-    const markerX = percentile * width;
-    document.getElementById("bellMarker").setAttribute("x1", markerX);
-    document.getElementById("bellMarker").setAttribute("x2", markerX);
-
-    // Make visible BEFORE measuring text length
-    const bellWrap = document.getElementById("bellWrapper");
-    bellWrap.classList.remove("hidden");
-
-    // Fraction label elements
-    const label = document.getElementById("bellScoreLabel");
-    const top = document.getElementById("bellScoreTop");
-    const bottom = document.getElementById("bellScoreBottom");
-    const bar = document.getElementById("bellScoreBar");
-
-    const rounded = Math.round(vpr);
-
-    // Move the whole fraction up about 8px vs your prior 22
-    const topY = 14;
-    const bottomDy = 22;
-    const barY = topY + 6;
-
-    // Decide which side to place label
-    const placeRight = (rounded <= 500);
-
-    const pad = 22;
-    const sideOffset = 10; // how far off the marker line
-
-    let labelX;
-    let anchor;
-
-    if (placeRight) {
-        anchor = "start";
-        labelX = Math.min(markerX + sideOffset, width - pad);
-    } else {
-        anchor = "end";
-        labelX = Math.max(markerX - sideOffset, pad);
-    }
-
-    // Update text
-    top.textContent = String(rounded);
-    bottom.textContent = "1000";
-
-    // Set anchor and positions
-    label.setAttribute("text-anchor", anchor);
-
-    label.setAttribute("x", labelX);
-    label.setAttribute("y", topY);
-
-    top.setAttribute("x", labelX);
-    top.setAttribute("y", topY);
-
-    bottom.setAttribute("x", labelX);
-    bottom.setAttribute("dy", bottomDy);
-
-    // Center the fraction bar relative to the NUMBER width (works for both start/end anchors)
-    const textLen = top.getComputedTextLength();
-    const leftEdge = (anchor === "end") ? (labelX - textLen) : labelX;
-    const centerX = leftEdge + (textLen / 2);
-
-    const barWidth = Math.min(42, textLen + 8);
-    bar.setAttribute("x1", centerX - barWidth / 2);
-    bar.setAttribute("x2", centerX + barWidth / 2);
-    bar.setAttribute("y1", barY);
-    bar.setAttribute("y2", barY);
-}
+    if (hasAccess()) showLandingMainMenu();
+    else showLandingAccessOnly();
+};
 </script>
 
 </body>
