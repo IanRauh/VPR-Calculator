@@ -1017,6 +1017,34 @@ button:disabled{
     display: block;
 }
 
+/* ===== Mobile fix: prevent landing logo from overlapping title ===== */
+@media (max-width: 640px){
+
+  /* shrink + tuck the logo */
+  .landingFavicon{
+    width: 64px;
+    height: 64px;
+    left: 10px;
+    top: 10px;
+    border-radius: 10px;
+  }
+  .landingFavicon img{
+    width: 54px;
+    height: 54px;
+  }
+
+  /* push the landing header down so the title clears the fixed logo */
+  #landingPage .header{
+    padding-top: 86px; /* tweak 76-96px if you want */
+  }
+
+  /* optional: slightly reduce title size on mobile */
+  .main-title{
+    font-size: 40px;
+    line-height: 1.05;
+  }
+}
+
 /* ===== About page layout tweaks (ONLY About VPR) ===== */
 #aboutPage .contentPageWrap{
     max-width: 1150px;
